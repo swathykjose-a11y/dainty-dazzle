@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
+/*
+ * Dainty Dazzle — Lumiere Reference Theme
+ * Source of truth: DESIGN.md
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Palette from Lumiere reference */
+  --color-sage-canvas: #F2F5EF;
+  --color-card-white: #FFFFFF;
+  --color-charcoal: #1A211D;
+  --color-sage-border: #D5DDD6;
+  --color-sage-muted: #737F76;
+
+  /* Typography */
+  --font-primary: var(--font-geist), "Helvetica Neue", sans-serif;
+  --font-secondary: var(--font-playfair-display), var(--font-overused-grotesk), "Georgia", serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors */
+  --color-sage-canvas: var(--color-sage-canvas);
+  --color-card-white: var(--color-card-white);
+  --color-charcoal: var(--color-charcoal);
+  --color-sage-border: var(--color-sage-border);
+  --color-sage-muted: var(--color-sage-muted);
+
+  /* Fonts */
+  --font-primary: var(--font-primary);
+  --font-secondary: var(--font-secondary);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Base resets */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-sage-canvas);
+  color: var(--color-charcoal);
+  font-family: var(--font-primary);
+}
+
+::selection {
+  background-color: #1A211D22;
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
