@@ -1,19 +1,13 @@
-import { z } from "zod/v4";
-import { productSchema } from "./product";
+// Collection types for the Shopify data layer.
+// When switching to real Shopify API, add Zod schemas back for runtime validation.
 
-export const collectionSchema = z.object({
-  id: z.string(),
-  handle: z.string(),
-  title: z.string(),
-  description: z.string(),
-  image: z
-    .object({
-      url: z.url(),
-      altText: z.string().nullable(),
-    })
-    .nullable()
-    .optional(),
-  products: z.array(productSchema).optional(),
-});
+import type { Product } from "./product";
 
-export type Collection = z.infer<typeof collectionSchema>;
+export interface Collection {
+  id: string;
+  handle: string;
+  title: string;
+  description: string;
+  image?: { url: string; altText: string | null } | null;
+  products?: Product[];
+}
