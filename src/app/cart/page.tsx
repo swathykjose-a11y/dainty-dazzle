@@ -93,7 +93,7 @@ export default function CartPage() {
             <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
               {/* Free Shipping Progress Indicator */}
               <div className="bg-card-white border border-sage-border/50 p-4 rounded-xs">
-                <p className="text-[11px] font-primary tracking-[0.1em] text-charcoal mb-2">
+                <p className="text-[11px] font-primary tracking-widest text-charcoal mb-2">
                   {amountToFreeShipping > 0 ? (
                     <>
                       Add{" "}
@@ -117,7 +117,7 @@ export default function CartPage() {
               </div>
 
               {/* Items List */}
-              <div className="divide-y divide-sage-border/50 border-t border-b border-sage-border/50">
+              <div className="divide-y border-y border-sage-border/50">
                 {items.map((item) => {
                   const image = item.product.images[0];
                   return (
