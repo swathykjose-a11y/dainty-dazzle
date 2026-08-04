@@ -6,8 +6,8 @@
 import { mockProducts } from "@/lib/mock-data/products";
 import { mockCollections } from "@/lib/mock-data/collections";
 import { mockPolicies, type PolicyData } from "@/lib/mock-data/policies";
-import type { Product } from "@/lib/validation/product";
-import type { Collection } from "@/lib/validation/collection";
+import type { Product } from "@/types/product";
+import type { Collection } from "@/types/collection";
 
 // ─── Products ────────────────────────────────────────────────────────────────
 

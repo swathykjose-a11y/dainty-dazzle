@@ -1,7 +1,7 @@
 // TODO: replace with Shopify Storefront API
 // Mock collections matching the Collection type.
 
-import type { Collection } from "@/lib/validation/collection";
+import type { Collection } from "@/types/collection";
 import { mockProducts } from "./products";
 
 export const mockCollections: Collection[] = [

@@ -8,7 +8,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import type { Product } from "@/lib/validation/product";
+import type { Product } from "@/types/product";
 import { showToast } from "@/components/ui/toast";
 
 export interface CartItem {

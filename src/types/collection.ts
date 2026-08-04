@@ -1,6 +1,3 @@
-// Collection types for the Shopify data layer.
-// When switching to real Shopify API, add Zod schemas back for runtime validation.
-
 import type { Product } from "./product";
 
 export interface Collection {

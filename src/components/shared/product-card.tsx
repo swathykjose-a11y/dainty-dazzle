@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Product } from "@/lib/validation/product";
+import type { Product } from "@/types/product";
 import { PriceDisplay } from "@/components/ui/price-display";
 
 interface ProductCardProps {

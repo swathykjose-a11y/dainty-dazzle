@@ -2,8 +2,8 @@
 // Server-only components that inject <script type="application/ld+json"> into the page.
 // These provide Schema.org markup for SEO (rich results) and AEO (answer engines).
 
-import type { Product } from "@/lib/validation/product";
-import type { Collection } from "@/lib/validation/collection";
+import type { Product } from "@/types/product";
+import type { Collection } from "@/types/collection";
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 

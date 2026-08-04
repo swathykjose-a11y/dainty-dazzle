@@ -2,7 +2,7 @@
 
 import { useCart } from "@/components/providers/cart-provider";
 import { Button } from "@/components/ui/button";
-import type { Product } from "@/lib/validation/product";
+import type { Product } from "@/types/product";
 
 interface AddToCartButtonProps {
   product: Product;

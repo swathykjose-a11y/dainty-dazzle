@@ -5,51 +5,13 @@
  * Large image on the left, brand story text + CTA on the right.
  */
 
-"use client";
-
-import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "@/components/ui/button";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export function StorySection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-
-      if (prefersReducedMotion || !contentRef.current) return;
-
-      gsap.fromTo(
-        contentRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 65%",
-            once: true,
-          },
-        },
-      );
-    },
-    { scope: sectionRef },
-  );
-
   return (
-    <section ref={sectionRef} className="py-16 md:py-24 lg:py-32 bg-sage-canvas">
+    <section className="py-16 md:py-24 lg:py-32 bg-sage-canvas">
       <div className="w-full px-4 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left: Feature Image */}
@@ -64,7 +26,7 @@ export function StorySection() {
           </div>
 
           {/* Right: Brand Story Content */}
-          <div ref={contentRef} className="flex flex-col justify-center py-4 lg:py-8">
+          <div className="flex flex-col justify-center py-4 lg:py-8 animate-fade-in-up">
             <span className="text-[10px] font-primary font-medium uppercase tracking-[0.2em] text-sage-muted mb-4 block">
               Our Story
             </span>

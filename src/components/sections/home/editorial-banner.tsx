@@ -5,15 +5,7 @@
  * Reusable for multiple placements on the homepage.
  */
 
-"use client";
-
-import { useRef } from "react";
 import Image from "next/image";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface EditorialBannerProps {
   imageUrl: string;
@@ -30,36 +22,6 @@ export function EditorialBanner({
   subtitle,
   align = "left",
 }: EditorialBannerProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-
-      if (prefersReducedMotion || !textRef.current) return;
-
-      gsap.fromTo(
-        textRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 60%",
-            once: true,
-          },
-        },
-      );
-    },
-    { scope: sectionRef },
-  );
-
   const alignmentClasses = {
     left: "items-start text-left pl-6 sm:pl-12 lg:pl-20",
     center: "items-center text-center px-6",
@@ -67,10 +29,7 @@ export function EditorialBanner({
   };
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full h-screen min-h-150 flex overflow-hidden"
-    >
+    <section className="relative w-full h-screen min-h-150 flex overflow-hidden">
       {/* Background image */}
       <Image
         src={imageUrl}
@@ -85,8 +44,7 @@ export function EditorialBanner({
 
       {/* Text content */}
       <div
-        ref={textRef}
-        className={`relative z-10 flex flex-col justify-end pb-16 sm:pb-20 lg:pb-24 max-w-3xl ${alignmentClasses[align]}`}
+        className={`relative z-10 flex flex-col justify-end pb-16 sm:pb-20 lg:pb-24 max-w-3xl animate-fade-in-up ${alignmentClasses[align]}`}
       >
         <h2 className="font-secondary text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white tracking-tight font-normal leading-[1.05]">
           {headline}

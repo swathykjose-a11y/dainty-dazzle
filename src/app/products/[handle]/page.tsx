@@ -4,7 +4,6 @@ import Image from "next/image";
 import { getProductByHandle, getProducts } from "@/lib/shopify";
 import { ProductJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { PriceDisplay } from "@/components/ui/price-display";
-import { Badge } from "@/components/ui/badge";
 import { AddToCartButton } from "./add-to-cart-button";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -102,7 +101,9 @@ export default async function ProductPage({ params }: Props) {
               )}
               {isOnSale && (
                 <div className="absolute top-4 left-4">
-                  <Badge variant="sale" />
+                  <span className="inline-block rounded-full bg-charcoal text-white px-2.5 py-0.5 text-xs font-medium uppercase tracking-widest font-primary">
+                    Sale
+                  </span>
                 </div>
               )}
             </div>

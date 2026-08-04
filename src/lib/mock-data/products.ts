@@ -2,7 +2,7 @@
 // This mock data file matches the Product type exactly.
 // Swapping to real API responses should require zero component changes.
 
-import type { Product } from "@/lib/validation/product";
+import type { Product } from "@/types/product";
 
 export const mockProducts: Product[] = [
   {

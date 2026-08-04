@@ -5,18 +5,10 @@
  * product images and starting prices, linking to collection pages.
  */
 
-"use client";
-
-import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import type { Product } from "@/lib/validation/product";
+import type { Product } from "@/types/product";
 import { PriceDisplay } from "@/components/ui/price-display";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface CategoriesSectionProps {
   products: Product[];
@@ -36,38 +28,6 @@ const categories = [
 ];
 
 export function CategoriesSection({ products }: CategoriesSectionProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-
-      if (prefersReducedMotion || !gridRef.current) return;
-
-      const items = gridRef.current.querySelectorAll("[data-category-card]");
-      gsap.fromTo(
-        items,
-        { opacity: 0, y: 25 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          stagger: 0.12,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 75%",
-            once: true,
-          },
-        },
-      );
-    },
-    { scope: sectionRef },
-  );
-
   // Get a representative product for each category for price display
   const getCategoryPrice = (tag: string) => {
     const product = products.find((p) => p.tags?.includes(tag));
@@ -75,7 +35,7 @@ export function CategoriesSection({ products }: CategoriesSectionProps) {
   };
 
   return (
-    <section ref={sectionRef} className="py-16 md:py-24 lg:py-32 bg-sage-canvas">
+    <section className="py-16 md:py-24 lg:py-32 bg-sage-canvas">
       <div className="w-full px-4 sm:px-8 lg:px-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-10 md:mb-14">
@@ -94,14 +54,13 @@ export function CategoriesSection({ products }: CategoriesSectionProps) {
         </div>
 
         {/* Category Cards Grid */}
-        <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 animate-fade-in-up">
           {categories.map((cat) => {
             const price = getCategoryPrice(cat.handle);
             return (
               <Link
                 key={cat.handle}
                 href={`/collections/${cat.handle}`}
-                data-category-card
                 className="group relative block overflow-hidden rounded-xs bg-card-white border border-sage-border/50 transition-all duration-300 hover:border-charcoal/40"
               >
                 {/* Image */}

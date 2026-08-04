@@ -1,6 +1,3 @@
-// Product types for the Shopify data layer.
-// When switching to real Shopify API, add Zod schemas back for runtime validation.
-
 export interface ProductImage {
   url: string;
   altText: string | null;
