@@ -34,27 +34,27 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   title: {
-    default: "Lumiere | Dainty Dazzle — Fine Jewelry",
-    template: "%s | Lumiere",
+    default: "Dainty Dazzle Jewelry — Earrings & Necklaces",
+    template: "%s | Dainty Dazzle",
   },
   description:
-    "True beauty shines from within. Discover delicate, handcrafted jewelry designed to reflect it.",
+    "True beauty shines from within. Shop handcrafted earrings and necklaces designed for everyday elegance. Free shipping over ₹999.",
   metadataBase: new URL(siteUrl),
 
   // ─── SEO Keywords ──────────────────────────────────────────────────────────
   keywords: [
-    "fine jewelry",
-    "handcrafted jewelry",
-    "gold necklace",
-    "delicate jewelry",
-    "14k gold",
-    "sterling silver earrings",
-    "stackable rings",
-    "dainty necklace",
-    "minimal jewelry",
-    "luxury jewelry online",
+    "dainty jewelry",
+    "handcrafted jewelry India",
+    "earrings online India",
+    "necklaces online India",
+    "gold earrings",
+    "stud earrings",
+    "chain necklace",
+    "pendant necklace",
+    "jhumka earrings",
+    "affordable jewelry India",
     "Dainty Dazzle",
-    "Lumiere jewelry",
+    "dainty dazzle jewelry",
   ],
 
   // ─── Robots ────────────────────────────────────────────────────────────────
@@ -78,18 +78,18 @@ export const metadata: Metadata = {
   // ─── Open Graph ────────────────────────────────────────────────────────────
   openGraph: {
     type: "website",
-    siteName: "Dainty Dazzle",
-    locale: "en_US",
-    title: "Lumiere | Dainty Dazzle — Fine Jewelry",
+    siteName: "Dainty Dazzle Jewelry",
+    locale: "en_IN",
+    title: "Dainty Dazzle Jewelry — Earrings & Necklaces",
     description:
-      "True beauty shines from within. Discover delicate, handcrafted jewelry designed to reflect it.",
+      "True beauty shines from within. Shop handcrafted earrings and necklaces designed for everyday elegance.",
     url: siteUrl,
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Dainty Dazzle — Fine, Handcrafted Jewelry",
+        alt: "Dainty Dazzle — Handcrafted Jewelry",
       },
     ],
   },
@@ -97,16 +97,16 @@ export const metadata: Metadata = {
   // ─── Twitter Card ──────────────────────────────────────────────────────────
   twitter: {
     card: "summary_large_image",
-    title: "Lumiere | Dainty Dazzle — Fine Jewelry",
+    title: "Dainty Dazzle Jewelry — Earrings & Necklaces",
     description:
-      "True beauty shines from within. Discover delicate, handcrafted jewelry designed to reflect it.",
+      "True beauty shines from within. Shop handcrafted earrings and necklaces designed for everyday elegance.",
     images: ["/og-image.png"],
   },
 
   // ─── Other ─────────────────────────────────────────────────────────────────
-  applicationName: "Dainty Dazzle",
+  applicationName: "Dainty Dazzle Jewelry",
   creator: "Kairos Artifex",
-  publisher: "Dainty Dazzle",
+  publisher: "Dainty Dazzle Jewelry",
   category: "E-commerce",
   formatDetection: {
     email: false,
@@ -123,6 +123,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${geist.variable} ${playfair.variable} ${overusedGrotesk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-sage-canvas text-charcoal font-primary">
