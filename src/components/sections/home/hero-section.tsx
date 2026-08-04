@@ -1,21 +1,24 @@
 /*
- * Lumiere Hero Section
+ * Dainty Dazzle Hero Section
  *
- * Full-width cinematic photographic hero with massive elegant serif headline "Lumiere"
- * and bottom caption text matching the reference UI.
+ * Full-viewport-height cinematic hero with brand name overlay,
+ * subtitle, and "Shop Now" CTA — matching Simuero reference layout.
  */
 
 "use client";
 
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const captionRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
@@ -39,6 +42,13 @@ export function HeroSection() {
         { opacity: 1, y: 0, duration: 0.8 },
         "-=0.6",
       );
+
+      tl.fromTo(
+        ctaRef.current,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        "-=0.4",
+      );
     },
     { scope: containerRef },
   );
@@ -46,39 +56,48 @@ export function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-[75vh] min-h-137.5 max-h-200 flex flex-col justify-center items-center overflow-hidden bg-charcoal text-white"
+      className="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden bg-charcoal text-white"
     >
       {/* Hero background photography */}
       <Image
         src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1920&q=85&auto=format&fit=crop"
-        alt="Lumiere fine jewelry hero image"
+        alt="Dainty Dazzle fine jewelry hero image"
         fill
         priority
         sizes="100vw"
-        className="object-cover object-center brightness-[0.88]"
+        className="object-cover object-center brightness-[0.82]"
       />
 
       {/* Soft gradient overlay */}
-      <div className="absolute inset-0 bg-linear-to-b from-black/30 via-transparent to-black/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/35 via-transparent to-black/50 pointer-events-none" />
 
-      {/* Massive Lumiere Hero Title */}
-      <div className="relative z-10 text-center px-4 max-w-5xl my-auto">
+      {/* Massive Brand Hero Title */}
+      <div className="relative z-10 text-center px-4 max-w-5xl my-auto flex flex-col items-center gap-6">
         <h1
           ref={headlineRef}
-          className="font-secondary text-7xl sm:text-9xl md:text-[140px] lg:text-[180px] font-normal tracking-tight text-white leading-none drop-shadow-sm select-none"
+          className="font-secondary text-6xl sm:text-8xl md:text-[120px] lg:text-[160px] font-normal tracking-tight text-white leading-none drop-shadow-sm select-none"
         >
-          Lumiere
+          Dainty Dazzle
         </h1>
-      </div>
 
-      {/* Bottom Subtitle Caption */}
-      <div className="relative z-10 text-center pb-8 px-6 max-w-xl">
         <p
           ref={captionRef}
-          className="text-xs sm:text-sm font-primary text-white/90 font-light tracking-wide leading-relaxed drop-shadow-sm"
+          className="text-xs sm:text-sm font-primary text-white/90 font-light tracking-wide leading-relaxed drop-shadow-sm max-w-lg"
         >
-          True beauty shines from within, and our jewelry merely reflects it!
+          True beauty shines from within, and our jewelry merely reflects it.
         </p>
+
+        <div ref={ctaRef}>
+          <Link href="/collections/new-arrivals">
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-white/60 text-white hover:bg-white/10 hover:border-white mt-2"
+            >
+              SHOP NOW ↗
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );
