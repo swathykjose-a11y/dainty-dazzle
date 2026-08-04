@@ -4,29 +4,34 @@ import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/components/providers/cart-provider";
 import { ToastContainer } from "@/components/ui/toast";
+import { SearchOverlay } from "@/components/shared/search-overlay";
 
 const navLinks = [
-  { href: "/collections/new-arrivals", label: "NEW COLLECTION" },
-  { href: "/collections/necklaces", label: "CATALOG" },
-  { href: "/collections/rings", label: "GIFT CARDS" },
-  { href: "/policies/shipping", label: "ABOUT US" },
-  { href: "/policies/shipping", label: "DELIVERY" },
-  { href: "/policies/privacy", label: "CONTACTS" },
-  { href: "/policies/terms", label: "FAQ" },
+  { href: "/collections/new-arrivals", label: "SHOP ALL" },
+  { href: "/collections/earrings", label: "EARRINGS" },
+  { href: "/collections/necklaces", label: "NECKLACES" },
 ];
 
 export function Header() {
   const { totalQuantity } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <>
+      {/* Announcement Bar */}
+      <div className="bg-charcoal text-sage-canvas text-center py-2 px-4">
+        <p className="text-[10px] sm:text-[11px] font-primary font-medium tracking-[0.18em] uppercase">
+          Free shipping on orders over ₹999
+        </p>
+      </div>
+
       <header className="sticky top-0 z-50 bg-sage-canvas/90 backdrop-blur-md border-b border-sage-border/60">
         <div className="w-full px-4 sm:px-8 lg:px-12">
-          <div className="flex h-14 items-center justify-between">
-            {/* Desktop navigation links */}
+          <div className="flex h-14 lg:h-16 items-center justify-between">
+            {/* Left: Desktop navigation links */}
             <nav
-              className="hidden lg:flex items-center gap-6 xl:gap-8"
+              className="hidden lg:flex items-center gap-6 xl:gap-8 flex-1"
               aria-label="Main navigation"
             >
               {navLinks.map((link) => (
@@ -70,22 +75,46 @@ export function Header() {
               </svg>
             </button>
 
-            {/* Mobile brand title */}
+            {/* Center: Brand Name */}
             <Link
               href="/"
-              className="lg:hidden font-secondary text-lg tracking-tight text-charcoal font-medium"
+              className="font-secondary text-xl lg:text-2xl tracking-tight text-charcoal font-medium shrink-0"
             >
-              Lumiere
+              Dainty Dazzle
             </Link>
 
-            {/* Cart Pill Button (Right side) */}
-            <Link
-              href="/cart"
-              className="inline-flex items-center gap-2 rounded-full border border-charcoal/30 px-4 py-1.5 text-[11px] font-medium tracking-[0.14em] text-charcoal hover:border-charcoal hover:bg-charcoal/5 transition-all"
-            >
-              <span>CART</span>
-              <span>({totalQuantity})</span>
-            </Link>
+            {/* Right: Search + Cart */}
+            <div className="flex items-center gap-3 lg:gap-4 flex-1 justify-end">
+              {/* Search Button */}
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                className="p-2 text-charcoal/70 hover:text-charcoal transition-colors cursor-pointer"
+                aria-label="Search products"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </button>
+
+              {/* Cart Pill Button */}
+              <Link
+                href="/cart"
+                className="inline-flex items-center gap-2 rounded-full border border-charcoal/30 px-4 py-1.5 text-[11px] font-medium tracking-[0.14em] text-charcoal hover:border-charcoal hover:bg-charcoal/5 transition-all"
+              >
+                <span>CART</span>
+                <span>({totalQuantity})</span>
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -110,6 +139,12 @@ export function Header() {
           </nav>
         )}
       </header>
+
+      {/* Search Overlay */}
+      <SearchOverlay
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
 
       <ToastContainer />
     </>
