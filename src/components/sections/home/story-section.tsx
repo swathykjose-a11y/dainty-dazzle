@@ -1,41 +1,100 @@
+/*
+ * Brand Story Section — "We believe in our process"
+ *
+ * Split layout matching Simuero reference:
+ * Large image on the left, brand story text + CTA on the right.
+ */
+
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "@/components/ui/button";
 
+gsap.registerPlugin(ScrollTrigger);
+
 export function StorySection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (prefersReducedMotion || !contentRef.current) return;
+
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 65%",
+            once: true,
+          },
+        },
+      );
+    },
+    { scope: sectionRef },
+  );
+
   return (
-    <section className="py-16 md:py-24 bg-sage-canvas border-t border-sage-border/40">
+    <section ref={sectionRef} className="py-16 md:py-24 lg:py-32 bg-sage-canvas">
       <div className="w-full px-4 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-          {/* Left Feature Image */}
-          <div className="lg:col-span-6">
-            <div className="relative aspect-4/5 sm:aspect-4/3 lg:aspect-4/3 w-full rounded-sm overflow-hidden bg-sage-border/30">
-              <Image
-                src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1200&q=85&auto=format&fit=crop"
-                alt="Dainty Dazzle craftsmanship and lifestyle"
-                fill
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover object-center"
-              />
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          {/* Left: Feature Image */}
+          <div className="relative aspect-4/5 sm:aspect-3/4 lg:aspect-4/5 w-full rounded-xs overflow-hidden bg-sage-border/30">
+            <Image
+              src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=1200&q=85&auto=format&fit=crop"
+              alt="Dainty Dazzle craftsmanship — handcrafted jewelry process"
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover object-center"
+            />
           </div>
 
-          {/* Right Brand Quote & CTA */}
-          <div className="lg:col-span-6 flex flex-col justify-between items-start lg:items-end text-left lg:text-right py-4 lg:py-6">
-            <p className="text-sm md:text-base font-primary text-charcoal/85 leading-relaxed max-w-lg mb-8">
-              We believe true splendor comes from within. Our pieces are crafted for
-              those who want to shine — not just on the outside, but in spirit. Every
-              jewel is created with attention to detail to bring you an enduring
-              sense of lightness, beauty, and harmony!
+          {/* Right: Brand Story Content */}
+          <div ref={contentRef} className="flex flex-col justify-center py-4 lg:py-8">
+            <span className="text-[10px] font-primary font-medium uppercase tracking-[0.2em] text-sage-muted mb-4 block">
+              Our Story
+            </span>
+
+            <h2 className="font-secondary text-3xl md:text-4xl lg:text-5xl text-charcoal tracking-tight font-normal leading-[1.1]">
+              We believe
+              <br />
+              in our process.
+            </h2>
+
+            <p className="mt-6 text-sm font-primary text-sage-muted leading-relaxed max-w-md">
+              Every piece of Dainty Dazzle jewelry is crafted with intention.
+              From selecting materials to the final polish, we pour care into every
+              step. Our designs are rooted in simplicity and made to be worn
+              every day — because true elegance is effortless.
             </p>
 
-            <Link href="/policies/shipping">
-              <Button variant="outline" size="md">
-                LEARN MORE ABOUT US ↗
-              </Button>
-            </Link>
+            <p className="mt-4 text-sm font-primary text-sage-muted leading-relaxed max-w-md">
+              We started with a simple belief: that beautiful jewelry shouldn&apos;t
+              cost a fortune. Each piece is designed in India and made to celebrate
+              the quiet confidence of the women who wear them.
+            </p>
+
+            <div className="mt-8">
+              <Link href="/collections/new-arrivals">
+                <Button variant="outline" size="md">
+                  EXPLORE COLLECTION ↗
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
