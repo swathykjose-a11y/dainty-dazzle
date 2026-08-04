@@ -24,13 +24,13 @@ export function OrganizationJsonLd({ siteUrl }: { siteUrl: string }) {
       data={{
         "@context": "https://schema.org",
         "@type": "Organization",
-        name: "Dainty Dazzle",
-        alternateName: "Lumiere",
+        name: "Dainty Dazzle Jewelry",
+        alternateName: "Dainty Dazzle",
         url: siteUrl,
         // TODO: Replace with actual logo URL once added to /public
         logo: `${siteUrl}/logo.png`,
         description:
-          "True beauty shines from within. Discover delicate, handcrafted jewelry designed to reflect it.",
+          "True beauty shines from within. Shop handcrafted earrings and necklaces designed for everyday elegance.",
         contactPoint: {
           "@type": "ContactPoint",
           email: "hello@daintydazzle.com",
@@ -51,8 +51,8 @@ export function WebSiteJsonLd({ siteUrl }: { siteUrl: string }) {
       data={{
         "@context": "https://schema.org",
         "@type": "WebSite",
-        name: "Dainty Dazzle",
-        alternateName: "Lumiere",
+        name: "Dainty Dazzle Jewelry",
+        alternateName: "Dainty Dazzle",
         url: siteUrl,
       }}
     />
@@ -81,7 +81,7 @@ export function ProductJsonLd({
         image: product.images.map((img) => img.url),
         brand: {
           "@type": "Brand",
-          name: "Dainty Dazzle",
+          name: "Dainty Dazzle Jewelry",
         },
         offers: {
           "@type": "Offer",
@@ -93,7 +93,7 @@ export function ProductJsonLd({
             : "https://schema.org/OutOfStock",
           seller: {
             "@type": "Organization",
-            name: "Dainty Dazzle",
+            name: "Dainty Dazzle Jewelry",
           },
         },
       }}
