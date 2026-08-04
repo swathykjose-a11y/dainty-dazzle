@@ -41,7 +41,7 @@ export default function CartPage() {
     }
   };
 
-  const freeShippingThreshold = 150;
+  const freeShippingThreshold = 999;
   const amountToFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
   const freeShippingProgress = Math.min(
     100,
@@ -98,7 +98,7 @@ export default function CartPage() {
                     <>
                       Add{" "}
                       <span className="font-medium">
-                        ${amountToFreeShipping.toFixed(2)}
+                        ₹{Math.round(amountToFreeShipping)}
                       </span>{" "}
                       more for <span className="font-medium">Complimentary Shipping</span>
                     </>
@@ -232,8 +232,8 @@ export default function CartPage() {
                   <div className="flex justify-between text-charcoal/80">
                     <span>Subtotal</span>
                     <PriceDisplay
-                      amount={subtotal.toFixed(2)}
-                      currencyCode="USD"
+                      amount={subtotal.toFixed(0)}
+                      currencyCode="INR"
                       className="font-medium text-charcoal"
                     />
                   </div>
@@ -249,8 +249,8 @@ export default function CartPage() {
                     Estimated Total
                   </span>
                   <PriceDisplay
-                    amount={subtotal.toFixed(2)}
-                    currencyCode="USD"
+                    amount={subtotal.toFixed(0)}
+                    currencyCode="INR"
                     className="text-base font-medium text-charcoal"
                   />
                 </div>
