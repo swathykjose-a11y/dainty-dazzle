@@ -5,30 +5,15 @@
  * Source of truth: DESIGN.md
  */
 
-:root {
-  /* Palette from Lumiere reference */
+@theme {
   --color-sage-canvas: #F2F5EF;
   --color-card-white: #FFFFFF;
   --color-charcoal: #1A211D;
   --color-sage-border: #D5DDD6;
   --color-sage-muted: #737F76;
 
-  /* Typography */
-  --font-primary: var(--font-geist), "Helvetica Neue", sans-serif;
-  --font-secondary: var(--font-playfair-display), var(--font-overused-grotesk), "Georgia", serif;
-}
-
-@theme inline {
-  /* Colors */
-  --color-sage-canvas: var(--color-sage-canvas);
-  --color-card-white: var(--color-card-white);
-  --color-charcoal: var(--color-charcoal);
-  --color-sage-border: var(--color-sage-border);
-  --color-sage-muted: var(--color-sage-muted);
-
-  /* Fonts */
-  --font-primary: var(--font-primary);
-  --font-secondary: var(--font-secondary);
+  --font-primary: var(--font-overused-grotesk), var(--font-geist), "Helvetica Neue", sans-serif;
+  --font-secondary: var(--font-overused-grotesk), "Helvetica Neue", sans-serif;
 }
 
 /* Base resets */
