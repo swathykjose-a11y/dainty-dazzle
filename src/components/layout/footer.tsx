@@ -5,10 +5,8 @@ const footerNav = [
     heading: "SHOP",
     links: [
       { href: "/collections/new-arrivals", label: "NEW ARRIVALS" },
-      { href: "/collections/necklaces", label: "NECKLACES" },
       { href: "/collections/earrings", label: "EARRINGS" },
-      { href: "/collections/rings", label: "RINGS" },
-      { href: "/collections/bracelets", label: "BRACELETS" },
+      { href: "/collections/necklaces", label: "NECKLACES" },
     ],
   },
   {
@@ -34,12 +32,35 @@ export function Footer() {
                 href="/"
                 className="font-secondary text-4xl tracking-tight text-white font-normal"
               >
-                Lumiere
+                Dainty Dazzle
               </Link>
               <p className="mt-4 text-xs font-primary text-sage-canvas/70 leading-relaxed max-w-sm">
-                Fine, handcrafted jewelry designed to catch light and celebrate
-                everyday elegance.
+                Handcrafted jewelry designed to celebrate everyday elegance.
+                True beauty shines from within.
               </p>
+
+              {/* Instagram */}
+              <a
+                href="https://www.instagram.com/dainty_dazzle__"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 mt-6 text-[11px] font-primary tracking-[0.14em] text-sage-canvas/70 hover:text-white transition-colors"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <rect x="2" y="2" width="20" height="20" rx="5" />
+                  <circle cx="12" cy="12" r="5" />
+                  <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+                </svg>
+                @DAINTY_DAZZLE__
+              </a>
             </div>
           </div>
 
@@ -69,7 +90,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-16 pt-6 border-t border-sage-canvas/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] font-primary tracking-wider text-sage-canvas/40">
-          <p>© {new Date().getFullYear()} LUMIERE. ALL RIGHTS RESERVED.</p>
+          <p>© {new Date().getFullYear()} DAINTY DAZZLE JEWELRY. ALL RIGHTS RESERVED.</p>
           <p>
             DESIGNED & DEVELOPED BY{" "}
             <a
