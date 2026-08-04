@@ -19,13 +19,6 @@ export function Header() {
 
   return (
     <>
-      {/* Announcement Bar */}
-      <div className="bg-charcoal text-sage-canvas text-center py-2 px-4">
-        <p className="text-[10px] sm:text-[11px] font-primary font-medium tracking-[0.18em] uppercase">
-          Free shipping on orders over ₹999
-        </p>
-      </div>
-
       <header className="sticky top-0 z-50 bg-sage-canvas/90 backdrop-blur-md border-b border-sage-border/60">
         <div className="w-full px-4 sm:px-8 lg:px-12">
           <div className="flex h-14 lg:h-16 items-center justify-between">
