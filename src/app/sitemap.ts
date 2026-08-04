@@ -40,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
-    images: p.images.map((img) => img.url),
+    images: p.images.map((img) => img.url.replace(/&/g, "&amp;")),
   }));
 
   return [
