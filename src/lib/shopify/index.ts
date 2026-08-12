@@ -23,11 +23,12 @@ async function shopifyFetch<T>({
   query: string;
   variables?: Record<string, unknown>;
   tags?: string[];
-}): Promise<T> {
+}): Promise<T | null> {
   if (!SHOPIFY_GRAPHQL_URL || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-    throw new Error(
+    console.warn(
       "Missing Shopify credentials. Set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_ACCESS_TOKEN.",
     );
+    return null;
   }
 
   const res = await fetch(SHOPIFY_GRAPHQL_URL, {
@@ -185,6 +186,7 @@ export async function getProducts(): Promise<Product[]> {
     tags: ["products"],
   });
 
+  if (!data) return [];
   return data.products.edges.map((e) => reshapeProduct(e.node));
 }
 
@@ -206,6 +208,7 @@ export async function getProductByHandle(
     tags: ["products"],
   });
 
+  if (!data) return null;
   return data.productByHandle ? reshapeProduct(data.productByHandle) : null;
 }
 
@@ -227,6 +230,7 @@ export async function getProductRecommendations(
     tags: ["products"],
   });
 
+  if (!data) return [];
   return (data.productRecommendations || [])
     .slice(0, 4)
     .map(reshapeProduct);
@@ -267,6 +271,7 @@ export async function getCollections(): Promise<Collection[]> {
     tags: ["collections"],
   });
 
+  if (!data) return [];
   return data.collections.edges.map((e) => ({
     id: e.node.id,
     handle: e.node.handle,
@@ -315,7 +320,7 @@ export async function getCollectionByHandle(
     tags: ["collections", "products"],
   });
 
-  if (!data.collectionByHandle) return null;
+  if (!data || !data.collectionByHandle) return null;
 
   const raw = data.collectionByHandle;
   return {
@@ -371,6 +376,7 @@ export async function getPolicies(): Promise<PolicyData[]> {
     tags: ["policies"],
   });
 
+  if (!data) return [];
   const policies: PolicyData[] = [];
 
   for (const [field, slug] of Object.entries(POLICY_MAP)) {
