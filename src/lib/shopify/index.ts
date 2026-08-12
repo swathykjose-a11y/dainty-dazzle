@@ -164,22 +164,72 @@ function reshapeProduct(raw: ShopifyProduct): Product {
   };
 }
 
-// ─── Products (placeholder — wired in next commit) ──────────────────────────
+// ─── Products ────────────────────────────────────────────────────────────────
 
 export async function getProducts(): Promise<Product[]> {
-  return [];
+  const data = await shopifyFetch<{
+    products: { edges: ShopifyEdge<ShopifyProduct>[] };
+  }>({
+    query: `
+      query GetProducts {
+        products(first: 50, sortKey: CREATED_AT, reverse: true) {
+          edges {
+            node {
+              ...ProductFields
+            }
+          }
+        }
+      }
+      ${PRODUCT_FRAGMENT}
+    `,
+    tags: ["products"],
+  });
+
+  return data.products.edges.map((e) => reshapeProduct(e.node));
 }
 
 export async function getProductByHandle(
   handle: string,
 ): Promise<Product | null> {
-  return null;
+  const data = await shopifyFetch<{
+    productByHandle: ShopifyProduct | null;
+  }>({
+    query: `
+      query GetProductByHandle($handle: String!) {
+        productByHandle(handle: $handle) {
+          ...ProductFields
+        }
+      }
+      ${PRODUCT_FRAGMENT}
+    `,
+    variables: { handle },
+    tags: ["products"],
+  });
+
+  return data.productByHandle ? reshapeProduct(data.productByHandle) : null;
 }
 
 export async function getProductRecommendations(
   productId: string,
 ): Promise<Product[]> {
-  return [];
+  const data = await shopifyFetch<{
+    productRecommendations: ShopifyProduct[];
+  }>({
+    query: `
+      query GetProductRecommendations($productId: ID!) {
+        productRecommendations(productId: $productId) {
+          ...ProductFields
+        }
+      }
+      ${PRODUCT_FRAGMENT}
+    `,
+    variables: { productId },
+    tags: ["products"],
+  });
+
+  return (data.productRecommendations || [])
+    .slice(0, 4)
+    .map(reshapeProduct);
 }
 
 // ─── Collections (placeholder — wired in next commit) ───────────────────────
