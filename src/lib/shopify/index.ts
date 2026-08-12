@@ -232,16 +232,100 @@ export async function getProductRecommendations(
     .map(reshapeProduct);
 }
 
-// ─── Collections (placeholder — wired in next commit) ───────────────────────
+// ─── Collections ─────────────────────────────────────────────────────────────
 
 export async function getCollections(): Promise<Collection[]> {
-  return [];
+  const data = await shopifyFetch<{
+    collections: {
+      edges: ShopifyEdge<{
+        id: string;
+        handle: string;
+        title: string;
+        description: string;
+        image: { url: string; altText: string | null } | null;
+      }>[];
+    };
+  }>({
+    query: `
+      query GetCollections {
+        collections(first: 20) {
+          edges {
+            node {
+              id
+              handle
+              title
+              description
+              image {
+                url
+                altText
+              }
+            }
+          }
+        }
+      }
+    `,
+    tags: ["collections"],
+  });
+
+  return data.collections.edges.map((e) => ({
+    id: e.node.id,
+    handle: e.node.handle,
+    title: e.node.title,
+    description: e.node.description,
+    image: e.node.image ?? undefined,
+  }));
 }
 
 export async function getCollectionByHandle(
   handle: string,
 ): Promise<Collection | null> {
-  return null;
+  const data = await shopifyFetch<{
+    collectionByHandle: {
+      id: string;
+      handle: string;
+      title: string;
+      description: string;
+      image: { url: string; altText: string | null } | null;
+      products: { edges: ShopifyEdge<ShopifyProduct>[] };
+    } | null;
+  }>({
+    query: `
+      query GetCollectionByHandle($handle: String!) {
+        collectionByHandle(handle: $handle) {
+          id
+          handle
+          title
+          description
+          image {
+            url
+            altText
+          }
+          products(first: 50) {
+            edges {
+              node {
+                ...ProductFields
+              }
+            }
+          }
+        }
+      }
+      ${PRODUCT_FRAGMENT}
+    `,
+    variables: { handle },
+    tags: ["collections", "products"],
+  });
+
+  if (!data.collectionByHandle) return null;
+
+  const raw = data.collectionByHandle;
+  return {
+    id: raw.id,
+    handle: raw.handle,
+    title: raw.title,
+    description: raw.description,
+    image: raw.image ?? undefined,
+    products: raw.products.edges.map((e) => reshapeProduct(e.node)),
+  };
 }
 
 // ─── Policies (placeholder — wired in next commit) ──────────────────────────
