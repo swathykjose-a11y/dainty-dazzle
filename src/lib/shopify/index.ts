@@ -328,7 +328,7 @@ export async function getCollectionByHandle(
   };
 }
 
-// ─── Policies (placeholder — wired in next commit) ──────────────────────────
+// ─── Policies ────────────────────────────────────────────────────────────────
 
 export interface PolicyData {
   slug: string;
@@ -336,14 +336,62 @@ export interface PolicyData {
   contentHtml: string;
 }
 
+// Shopify policy field names → our slug mapping
+const POLICY_MAP: Record<string, string> = {
+  privacyPolicy: "privacy",
+  termsOfService: "terms",
+  refundPolicy: "returns",
+  shippingPolicy: "shipping",
+};
+
+interface ShopifyPolicy {
+  title: string;
+  body: string;
+}
+
 export async function getPolicies(): Promise<PolicyData[]> {
-  return [];
+  const data = await shopifyFetch<{
+    shop: {
+      privacyPolicy: ShopifyPolicy | null;
+      termsOfService: ShopifyPolicy | null;
+      refundPolicy: ShopifyPolicy | null;
+      shippingPolicy: ShopifyPolicy | null;
+    };
+  }>({
+    query: `
+      query GetPolicies {
+        shop {
+          privacyPolicy { title body }
+          termsOfService { title body }
+          refundPolicy { title body }
+          shippingPolicy { title body }
+        }
+      }
+    `,
+    tags: ["policies"],
+  });
+
+  const policies: PolicyData[] = [];
+
+  for (const [field, slug] of Object.entries(POLICY_MAP)) {
+    const policy = data.shop[field as keyof typeof data.shop];
+    if (policy) {
+      policies.push({
+        slug,
+        title: policy.title,
+        contentHtml: policy.body,
+      });
+    }
+  }
+
+  return policies;
 }
 
 export async function getPolicyBySlug(
   slug: string,
 ): Promise<PolicyData | null> {
-  return null;
+  const policies = await getPolicies();
+  return policies.find((p) => p.slug === slug) ?? null;
 }
 
 // ─── Checkout & Cart ─────────────────────────────────────────────────────────
