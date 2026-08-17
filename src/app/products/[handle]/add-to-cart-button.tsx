@@ -62,7 +62,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
                   disabled={!v.availableForSale}
                   className={`
                     relative inline-flex items-center justify-center
-                    min-w-[72px] px-5 py-2.5
+                    min-w-18 px-5 py-2.5
                     text-[11px] font-primary font-medium tracking-[0.12em]
                     transition-all duration-200 ease-out cursor-pointer
                     rounded-sm border
@@ -91,7 +91,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
           onClick={handleAddToCart}
           disabled={!isAvailable}
           className={`
-            flex-1 h-[52px]
+            flex-1 h-13
             inline-flex items-center justify-center gap-2
             text-[11px] font-primary font-medium uppercase tracking-[0.18em]
             transition-all duration-200 ease-out
@@ -108,7 +108,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
         </button>
 
         {/* Quantity stepper — compact, bordered */}
-        <div className="flex items-center border border-sage-border rounded-sm bg-card-white h-[52px] shrink-0">
+        <div className="flex items-center border border-sage-border rounded-sm bg-card-white h-13 shrink-0">
           <button
             type="button"
             onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
