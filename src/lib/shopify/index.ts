@@ -43,7 +43,7 @@ async function shopifyFetch<T>({
 
   const json = await res.json();
 
-  if (json.errors) {
+  if (json.errors && !json.data) {
     console.error("Shopify GraphQL errors:", json.errors);
     throw new Error(json.errors[0]?.message || "Shopify API error");
   }
@@ -60,6 +60,7 @@ const PRODUCT_FRAGMENT = `
     title
     descriptionHtml
     availableForSale
+    totalInventory
     tags
     priceRange {
       minVariantPrice {
@@ -87,6 +88,7 @@ const PRODUCT_FRAGMENT = `
           id
           title
           availableForSale
+          quantityAvailable
           price {
             amount
             currencyCode
@@ -116,6 +118,7 @@ interface ShopifyVariant {
   id: string;
   title: string;
   availableForSale: boolean;
+  quantityAvailable?: number | null;
   price: { amount: string; currencyCode: string };
   compareAtPrice: { amount: string; currencyCode: string } | null;
 }
@@ -126,6 +129,7 @@ interface ShopifyProduct {
   title: string;
   descriptionHtml: string;
   availableForSale: boolean;
+  totalInventory?: number | null;
   tags: string[];
   priceRange: {
     minVariantPrice: { amount: string; currencyCode: string };
@@ -147,6 +151,7 @@ function reshapeProduct(raw: ShopifyProduct): Product {
     id: e.node.id,
     title: e.node.title,
     availableForSale: e.node.availableForSale,
+    quantityAvailable: e.node.quantityAvailable ?? null,
     price: e.node.price,
     compareAtPrice: e.node.compareAtPrice ?? undefined,
   }));
@@ -157,6 +162,7 @@ function reshapeProduct(raw: ShopifyProduct): Product {
     title: raw.title,
     descriptionHtml: raw.descriptionHtml,
     availableForSale: raw.availableForSale,
+    totalInventory: raw.totalInventory ?? null,
     tags: raw.tags,
     priceRange: raw.priceRange,
     compareAtPriceRange: raw.compareAtPriceRange,
@@ -188,6 +194,74 @@ export async function getProducts(): Promise<Product[]> {
 
   if (!data) return [];
   return data.products.edges.map((e) => reshapeProduct(e.node));
+}
+
+export interface PaginatedProducts {
+  products: Product[];
+  pageInfo: {
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor: string | null;
+    endCursor: string | null;
+  };
+}
+
+export async function getProductsPaginated({
+  first,
+  after,
+}: {
+  first: number;
+  after?: string | null;
+}): Promise<PaginatedProducts> {
+  const data = await shopifyFetch<{
+    products: {
+      edges: ShopifyEdge<ShopifyProduct>[];
+      pageInfo: {
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        startCursor: string | null;
+        endCursor: string | null;
+      };
+    };
+  }>({
+    query: `
+      query GetProductsPaginated($first: Int!, $after: String) {
+        products(first: $first, after: $after, sortKey: CREATED_AT, reverse: true) {
+          edges {
+            node {
+              ...ProductFields
+            }
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        }
+      }
+      ${PRODUCT_FRAGMENT}
+    `,
+    variables: { first, after: after || null },
+    tags: ["products"],
+  });
+
+  if (!data) {
+    return {
+      products: [],
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: null,
+        endCursor: null,
+      },
+    };
+  }
+
+  return {
+    products: data.products.edges.map((e) => reshapeProduct(e.node)),
+    pageInfo: data.products.pageInfo,
+  };
 }
 
 export async function getProductByHandle(
@@ -234,6 +308,68 @@ export async function getProductRecommendations(
   return (data.productRecommendations || [])
     .slice(0, 4)
     .map(reshapeProduct);
+}
+
+export async function searchProducts(query: string): Promise<Product[]> {
+  const trimmed = query?.trim();
+  if (!trimmed) return [];
+
+  // 1. Try Shopify Predictive Search (optimized for live search / prefix matching)
+  try {
+    const predictiveData = await shopifyFetch<{
+      predictiveSearch: {
+        products: ShopifyProduct[];
+      } | null;
+    }>({
+      query: `
+        query SearchPredictive($query: String!) {
+          predictiveSearch(query: $query, types: [PRODUCT], limit: 10) {
+            products {
+              ...ProductFields
+            }
+          }
+        }
+        ${PRODUCT_FRAGMENT}
+      `,
+      variables: { query: trimmed },
+    });
+
+    if (
+      predictiveData?.predictiveSearch?.products &&
+      predictiveData.predictiveSearch.products.length > 0
+    ) {
+      return predictiveData.predictiveSearch.products.map(reshapeProduct);
+    }
+  } catch (err) {
+    console.warn("Predictive search failed, falling back to query search:", err);
+  }
+
+  // 2. Fallback to standard products search with wildcard
+  try {
+    const fallbackData = await shopifyFetch<{
+      products: { edges: ShopifyEdge<ShopifyProduct>[] };
+    }>({
+      query: `
+        query SearchProductsFallback($query: String!) {
+          products(first: 20, query: $query) {
+            edges {
+              node {
+                ...ProductFields
+              }
+            }
+          }
+        }
+        ${PRODUCT_FRAGMENT}
+      `,
+      variables: { query: `*${trimmed}*` },
+    });
+
+    if (!fallbackData) return [];
+    return fallbackData.products.edges.map((e) => reshapeProduct(e.node));
+  } catch (err) {
+    console.error("Products fallback search error:", err);
+    return [];
+  }
 }
 
 // ─── Collections ─────────────────────────────────────────────────────────────
