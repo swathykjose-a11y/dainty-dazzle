@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getProductByHandle, getProducts } from "@/lib/shopify";
 import { ProductJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
-import { PriceDisplay } from "@/components/ui/price-display";
 import { AddToCartButton } from "./add-to-cart-button";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -56,6 +55,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+/** Extract a collection / category label from tags */
+function getCollectionLabel(tags?: string[]): string {
+  if (!tags || tags.length === 0) return "Dainty Dazzle";
+
+  const nice: Record<string, string> = {
+    necklaces: "Necklace Collection",
+    earrings: "Earring Collection",
+    new: "New Arrival",
+    sale: "Limited Edition",
+  };
+
+  for (const tag of tags) {
+    if (nice[tag.toLowerCase()]) return nice[tag.toLowerCase()];
+  }
+
+  return "Dainty Dazzle";
+}
+
+/** Strip HTML and split into sentences for the description body */
+function getPlainDescription(html: string): string {
+  return html.replace(/<[^>]*>/g, "").trim();
+}
+
 // ─── Page Component ─────────────────────────────────────────────────────────
 
 export default async function ProductPage({ params }: Props) {
@@ -67,7 +91,18 @@ export default async function ProductPage({ params }: Props) {
   const image = product.images[0];
   const price = product.priceRange.minVariantPrice;
   const compareAt = product.compareAtPriceRange?.minVariantPrice;
-  const isOnSale = compareAt && parseFloat(compareAt.amount) > parseFloat(price.amount);
+  const isOnSale =
+    compareAt && parseFloat(compareAt.amount) > parseFloat(price.amount);
+  const collectionLabel = getCollectionLabel(product.tags);
+  const plainDesc = getPlainDescription(product.descriptionHtml);
+
+  const formatPrice = (amount: string, currency: string) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(parseFloat(amount));
 
   return (
     <>
@@ -84,78 +119,77 @@ export default async function ProductPage({ params }: Props) {
         ]}
       />
 
-      <section className="py-12 md:py-20 bg-sage-canvas">
-        <div className="w-full px-4 sm:px-8 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
-            {/* Product Image */}
-            <div className="relative aspect-square w-full bg-card-white border border-sage-border/50 rounded-xs overflow-hidden">
-              {image && (
-                <Image
-                  src={image.url}
-                  alt={image.altText || product.title}
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover object-center"
-                />
-              )}
-              {isOnSale && (
-                <div className="absolute top-4 left-4">
-                  <span className="inline-block rounded-full bg-charcoal text-white px-2.5 py-0.5 text-xs font-medium uppercase tracking-widest font-primary">
-                    Sale
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Product Info */}
-            <div className="flex flex-col justify-center">
-              <h1 className="font-secondary text-3xl md:text-4xl lg:text-5xl text-charcoal tracking-tight font-normal">
-                {product.title}
-              </h1>
-
-              <div className="mt-4">
-                <PriceDisplay
-                  amount={price.amount}
-                  currencyCode={price.currencyCode}
-                  compareAtAmount={compareAt?.amount}
-                  className="text-lg text-charcoal"
-                />
-              </div>
-
-              <div
-                className="mt-6 text-sm font-primary text-sage-muted leading-relaxed prose prose-sm"
-                dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+      <section className="min-h-[calc(100vh-80px)] bg-sage-canvas">
+        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100vh-80px)]">
+          {/* ─── Left: Product Image ─────────────────────────────────── */}
+          <div className="relative bg-[#E8E4DF]">
+            {image && (
+              <Image
+                src={image.url}
+                alt={image.altText || product.title}
+                fill
+                priority
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover object-center"
               />
+            )}
 
-              {/* Variants */}
-              {product.variants && product.variants.length > 1 && (
-                <div className="mt-8">
-                  <p className="text-[10px] font-primary font-medium uppercase tracking-[0.2em] text-sage-muted mb-3">
-                    Options
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {product.variants.map((v) => (
-                      <span
-                        key={v.id}
-                        className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-medium tracking-[0.14em] transition-colors ${
-                          v.availableForSale
-                            ? "border-charcoal/30 text-charcoal hover:border-charcoal hover:bg-charcoal/5 cursor-pointer"
-                            : "border-sage-border text-sage-muted line-through cursor-not-allowed"
-                        }`}
-                      >
-                        {v.title}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+            {/* Sale badge */}
+            {isOnSale && (
+              <div className="absolute top-6 left-6">
+                <span className="inline-block rounded-full bg-charcoal text-white px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] font-primary">
+                  Sale
+                </span>
+              </div>
+            )}
+          </div>
 
-              {/* Add to Cart */}
-              <div className="mt-8">
-                <AddToCartButton product={product} />
+          {/* ─── Right: Product Details ──────────────────────────────── */}
+          <div className="flex flex-col justify-center px-6 sm:px-10 lg:px-16 xl:px-20 py-12 lg:py-16">
+            {/* Collection label */}
+            <p className="text-[10px] font-primary font-medium uppercase tracking-[0.25em] text-sage-muted mb-4">
+              {collectionLabel}
+            </p>
+
+            {/* Product title */}
+            <h1 className="font-secondary text-3xl sm:text-4xl lg:text-[42px] text-charcoal tracking-tight font-normal leading-[1.15]">
+              {product.title}
+            </h1>
+
+            {/* Description */}
+            <p className="mt-5 text-[13px] font-primary text-sage-muted leading-[1.7] max-w-md">
+              {plainDesc}
+            </p>
+
+            {/* Divider */}
+            <div className="w-full h-px bg-sage-border/60 my-7" />
+
+            {/* Details / Notes section */}
+            <div className="mb-7">
+              <p className="text-[10px] font-primary font-medium uppercase tracking-[0.2em] text-sage-muted mb-2">
+                Details
+              </p>
+              <p className="text-[13px] font-primary text-charcoal/80 leading-[1.6]">
+                Handcrafted with care. Designed for everyday elegance.
+              </p>
+            </div>
+
+            {/* Price */}
+            <div className="mb-8">
+              <div className="flex items-baseline gap-3">
+                <span className="text-2xl sm:text-3xl font-secondary font-normal text-charcoal tracking-tight">
+                  {formatPrice(price.amount, price.currencyCode)}
+                </span>
+                {isOnSale && compareAt && (
+                  <span className="text-base font-primary text-sage-muted line-through">
+                    {formatPrice(compareAt.amount, compareAt.currencyCode)}
+                  </span>
+                )}
               </div>
             </div>
+
+            {/* Variant selector + Add to Cart */}
+            <AddToCartButton product={product} />
           </div>
         </div>
       </section>
