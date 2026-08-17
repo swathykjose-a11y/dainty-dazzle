@@ -4,7 +4,6 @@ const footerNav = [
   {
     heading: "SHOP",
     links: [
-      { href: "/collections/new-arrivals", label: "NEW ARRIVALS" },
       { href: "/collections/earrings", label: "EARRINGS" },
       { href: "/collections/necklaces", label: "NECKLACES" },
     ],

@@ -51,9 +51,9 @@ export function StorySection() {
             </p>
 
             <div className="mt-8">
-              <Link href="/collections/new-arrivals">
+              <Link href="#categories">
                 <Button variant="outline" size="md">
-                  EXPLORE COLLECTION ↗
+                  EXPLORE CATEGORIES ↗
                 </Button>
               </Link>
             </div>

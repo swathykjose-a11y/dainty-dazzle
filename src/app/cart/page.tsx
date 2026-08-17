@@ -63,7 +63,7 @@ export default function CartPage() {
           </div>
 
           <Link
-            href="/collections/new-arrivals"
+            href="/"
             className="text-[11px] font-primary font-medium tracking-[0.14em] text-charcoal/80 hover:text-charcoal transition-colors uppercase"
           >
             ← Continue Shopping
@@ -80,9 +80,9 @@ export default function CartPage() {
               Discover our delicate, handcrafted collections designed to celebrate
               everyday elegance.
             </p>
-            <Link href="/collections/new-arrivals">
+            <Link href="/#categories">
               <Button variant="primary" size="lg">
-                EXPLORE NEW ARRIVALS ↗
+                EXPLORE COLLECTIONS ↗
               </Button>
             </Link>
           </div>

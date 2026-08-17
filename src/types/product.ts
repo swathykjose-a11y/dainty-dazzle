@@ -7,6 +7,7 @@ export interface ProductVariant {
   id: string;
   title: string;
   availableForSale: boolean;
+  quantityAvailable?: number | null;
   price: { amount: string; currencyCode: string };
   compareAtPrice?: { amount: string; currencyCode: string } | null;
 }
@@ -16,6 +17,8 @@ export interface Product {
   handle: string;
   title: string;
   descriptionHtml: string;
+  availableForSale: boolean;
+  totalInventory?: number | null;
   priceRange: {
     minVariantPrice: { amount: string; currencyCode: string };
   };
@@ -24,6 +27,5 @@ export interface Product {
   };
   images: ProductImage[];
   variants?: ProductVariant[];
-  availableForSale: boolean;
   tags?: string[];
 }

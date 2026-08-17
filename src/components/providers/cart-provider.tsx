@@ -29,6 +29,7 @@ interface CartContextValue {
     variantId: string,
     variantTitle: string,
     price: { amount: string; currencyCode: string },
+    quantity?: number,
   ) => void;
   removeItem: (variantId: string) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
@@ -76,13 +77,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
       variantId: string,
       variantTitle: string,
       price: { amount: string; currencyCode: string },
+      quantity: number = 1,
     ) => {
+      const addQty = Math.max(1, quantity);
       setItems((prev) => {
         const existing = prev.find((i) => i.variantId === variantId);
         if (existing) {
           return prev.map((i) =>
             i.variantId === variantId
-              ? { ...i, quantity: i.quantity + 1 }
+              ? { ...i, quantity: i.quantity + addQty }
               : i,
           );
         }
@@ -93,7 +96,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             product,
             variantId,
             variantTitle,
-            quantity: 1,
+            quantity: addQty,
             price,
           },
         ];

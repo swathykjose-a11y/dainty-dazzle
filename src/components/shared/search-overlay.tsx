@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { mockProducts } from "@/lib/mock-data/products";
+import type { Product } from "@/types/product";
 import { PriceDisplay } from "@/components/ui/price-display";
 
 interface SearchOverlayProps {
@@ -14,6 +14,8 @@ interface SearchOverlayProps {
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [results, setResults] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Debounce search query input (300ms)
@@ -25,13 +27,38 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     return () => clearTimeout(timer);
   }, [query]);
 
-  const results = debouncedQuery.trim().length > 0
-    ? mockProducts.filter(
-        (p) =>
-          p.title.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-          p.tags?.some((t) => t.toLowerCase().includes(debouncedQuery.toLowerCase())),
-      )
-    : [];
+  // Fetch real search results from API
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim();
+    if (!trimmed) {
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    setIsLoading(true);
+
+    fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setResults(data.products || []);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          console.error("Failed to search products:", err);
+          setResults([]);
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [debouncedQuery]);
 
   // Focus input on open
   useEffect(() => {
@@ -40,6 +67,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     } else {
       setQuery("");
       setDebouncedQuery("");
+      setResults([]);
+      setIsLoading(false);
     }
   }, [isOpen]);
 
@@ -59,6 +88,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  const popularSearches = ["Choker", "Jhumkas", "Temple", "Filigree", "Gold"];
 
   return (
     <div className="fixed inset-0 z-100 bg-sage-canvas/98 backdrop-blur-sm flex flex-col">
@@ -91,19 +122,43 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
       {/* Search input */}
       <div className="px-4 sm:px-8 lg:px-12 py-8">
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search earrings, necklaces..."
-          className="w-full bg-transparent border-b-2 border-b-charcoal/20 focus:border-b-charcoal text-2xl sm:text-3xl md:text-4xl font-secondary text-charcoal caret-charcoal placeholder:text-sage-muted/50 outline-none py-4 transition-colors"
-        />
+        <div className="relative">
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search necklaces, chokers, jhumkas..."
+            className="w-full bg-transparent border-b-2 border-b-charcoal/20 focus:border-b-charcoal text-2xl sm:text-3xl md:text-4xl font-secondary text-charcoal caret-charcoal placeholder:text-sage-muted/50 outline-none py-4 pr-12 transition-colors"
+          />
+          {isLoading && (
+            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+              <div className="w-6 h-6 border-2 border-charcoal/20 border-t-charcoal rounded-full animate-spin" />
+            </div>
+          )}
+        </div>
+
+        {/* Quick tags */}
+        <div className="flex flex-wrap items-center gap-2 mt-4">
+          <span className="text-[10px] font-primary tracking-[0.12em] uppercase text-sage-muted mr-1">
+            Popular:
+          </span>
+          {popularSearches.map((term) => (
+            <button
+              key={term}
+              type="button"
+              onClick={() => setQuery(term)}
+              className="text-xs px-2.5 py-1 rounded-full border border-sage-border/80 bg-card-white/60 text-charcoal/80 hover:bg-card-white hover:text-charcoal hover:border-charcoal/30 transition-all cursor-pointer"
+            >
+              {term}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Results */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-8 lg:px-12 pb-12">
-        {debouncedQuery.trim().length > 0 && (
+        {debouncedQuery.trim().length > 0 && !isLoading && (
           <>
             <p className="text-[11px] font-primary font-medium tracking-[0.14em] text-sage-muted uppercase mb-6">
               {results.length} {results.length === 1 ? "result" : "results"}
@@ -112,7 +167,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             {results.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
                 {results.map((product) => {
-                  const image = product.images[0];
+                  const image = product.images?.[0];
                   return (
                     <Link
                       key={product.id}
@@ -121,7 +176,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                       className="group flex flex-col bg-card-white border border-sage-border/50 rounded-xs overflow-hidden transition-all duration-300 hover:border-charcoal/40"
                     >
                       <div className="relative aspect-square w-full bg-[#f6f8f5] overflow-hidden">
-                        {image && (
+                        {image ? (
                           <Image
                             src={image.url}
                             alt={image.altText || product.title}
@@ -129,6 +184,10 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
                             className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                           />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-sage-muted text-xs">
+                            No image
+                          </div>
                         )}
                       </div>
                       <div className="p-3 sm:p-4 flex items-center justify-between gap-2 border-t border-sage-border/40 bg-card-white">
@@ -154,11 +213,28 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   No products found for &ldquo;{debouncedQuery}&rdquo;
                 </p>
                 <p className="text-sm font-primary text-sage-muted mt-2">
-                  Try searching for &ldquo;earrings&rdquo; or &ldquo;necklace&rdquo;
+                  Try searching for &ldquo;choker&rdquo;, &ldquo;jhumkas&rdquo;, or &ldquo;filigree&rdquo;
                 </p>
               </div>
             )}
           </>
+        )}
+
+        {isLoading && debouncedQuery.trim().length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 animate-pulse">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="flex flex-col bg-card-white border border-sage-border/40 rounded-xs overflow-hidden"
+              >
+                <div className="aspect-square w-full bg-sage-border/30" />
+                <div className="p-3 sm:p-4 space-y-2">
+                  <div className="h-3 bg-sage-border/40 rounded w-3/4" />
+                  <div className="h-2.5 bg-sage-border/30 rounded w-1/3" />
+                </div>
+              </div>
+            ))}
+          </div>
         )}
 
         {debouncedQuery.trim().length === 0 && (
