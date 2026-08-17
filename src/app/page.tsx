@@ -2,7 +2,6 @@ import { getProducts } from "@/lib/shopify";
 import { HeroSection } from "@/components/sections/home/hero-section";
 import { FeaturedCollectionsSection } from "@/components/sections/home/featured-collections-section";
 import { EditorialBanner } from "@/components/sections/home/editorial-banner";
-import { CategoriesSection } from "@/components/sections/home/categories-section";
 import { StorySection } from "@/components/sections/home/story-section";
 
 export const revalidate = 3600;
@@ -23,8 +22,6 @@ export default async function Home() {
         subtitle="Handcrafted with love, designed to be worn every single day."
         align="left"
       />
-
-      <CategoriesSection products={products} />
 
       <StorySection />
 

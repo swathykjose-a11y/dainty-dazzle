@@ -35,7 +35,7 @@ export function CategoriesSection({ products }: CategoriesSectionProps) {
   };
 
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-sage-canvas">
+    <section id="categories" className="py-16 md:py-24 lg:py-32 bg-sage-canvas scroll-mt-16">
       <div className="w-full px-4 sm:px-8 lg:px-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-10 md:mb-14">
