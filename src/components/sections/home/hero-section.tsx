@@ -36,7 +36,7 @@ export function HeroSection() {
         </p>
 
         <div>
-          <Link href="/collections/new-arrivals">
+          <Link href="/products">
             <Button
               variant="outline"
               size="lg"

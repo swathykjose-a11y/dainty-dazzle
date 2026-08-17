@@ -7,9 +7,9 @@ import { ToastContainer } from "@/components/ui/toast";
 import { SearchOverlay } from "@/components/shared/search-overlay";
 
 const navLinks = [
-  { href: "/collections/new-arrivals", label: "SHOP ALL" },
   { href: "/collections/earrings", label: "EARRINGS" },
   { href: "/collections/necklaces", label: "NECKLACES" },
+  { href: "/products", label: "ALL PRODUCTS" },
 ];
 
 export function Header() {
