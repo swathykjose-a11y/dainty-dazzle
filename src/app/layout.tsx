@@ -94,6 +94,15 @@ export const metadata: Metadata = {
       "True beauty shines from within. Shop handcrafted earrings and necklaces designed for everyday elegance.",
   },
 
+  // ─── Icons ─────────────────────────────────────────────────────────────────
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
+
   // ─── Other ─────────────────────────────────────────────────────────────────
   applicationName: "Dainty Dazzle Jewelry",
   creator: "Kairos Artifex",
