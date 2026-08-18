@@ -8,14 +8,29 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import type { HeroBannerData } from "@/lib/shopify";
 
-export function HeroSection() {
+interface HeroSectionProps {
+  heroData?: HeroBannerData | null;
+}
+
+export function HeroSection({ heroData }: HeroSectionProps) {
+  const imageUrl =
+    heroData?.imageUrl ||
+    "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1920&q=85&auto=format&fit=crop";
+  const headline = heroData?.headline || "Dainty Dazzle";
+  const subtitle =
+    heroData?.subtitle ||
+    "True beauty shines from within, and our jewelry merely reflects it.";
+  const ctaText = heroData?.ctaText || "SHOP NOW ↗";
+  const ctaLink = heroData?.ctaLink || "/products";
+
   return (
     <section className="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden bg-charcoal text-white">
       {/* Hero background photography */}
       <Image
-        src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1920&q=85&auto=format&fit=crop"
-        alt="Dainty Dazzle fine jewelry hero image"
+        src={imageUrl}
+        alt={`${headline} fine jewelry hero image`}
         fill
         priority
         sizes="100vw"
@@ -28,21 +43,21 @@ export function HeroSection() {
       {/* Massive Brand Hero Title */}
       <div className="relative z-10 text-center px-4 max-w-5xl my-auto flex flex-col items-center gap-6 animate-fade-in-up">
         <h1 className="font-secondary text-6xl sm:text-8xl md:text-[120px] lg:text-[160px] font-normal tracking-tight text-white leading-none drop-shadow-sm select-none">
-          Dainty Dazzle
+          {headline}
         </h1>
 
         <p className="text-xs sm:text-sm font-primary text-white/90 font-light tracking-wide leading-relaxed drop-shadow-sm max-w-lg">
-          True beauty shines from within, and our jewelry merely reflects it.
+          {subtitle}
         </p>
 
         <div>
-          <Link href="/products">
+          <Link href={ctaLink}>
             <Button
               variant="outline"
               size="lg"
               className="border-white/60 text-white hover:bg-white/10 hover:border-white mt-2"
             >
-              SHOP NOW ↗
+              {ctaText}
             </Button>
           </Link>
         </div>

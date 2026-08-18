@@ -1,4 +1,4 @@
-import { getProducts } from "@/lib/shopify";
+import { getProducts, getHeroBanner } from "@/lib/shopify";
 import { HeroSection } from "@/components/sections/home/hero-section";
 import { FeaturedCollectionsSection } from "@/components/sections/home/featured-collections-section";
 import { EditorialBanner } from "@/components/sections/home/editorial-banner";
@@ -7,11 +7,14 @@ import { StorySection } from "@/components/sections/home/story-section";
 export const revalidate = 3600;
 
 export default async function Home() {
-  const products = await getProducts();
+  const [products, heroData] = await Promise.all([
+    getProducts(),
+    getHeroBanner(),
+  ]);
 
   return (
     <>
-      <HeroSection />
+      <HeroSection heroData={heroData} />
 
       <FeaturedCollectionsSection products={products} />
 

@@ -598,3 +598,86 @@ export async function createShopifyCheckout(
     checkoutUrl: `https://${SHOPIFY_STORE_DOMAIN}/checkout`,
   };
 }
+
+// ─── Metaobjects (CMS) ───────────────────────────────────────────────────────
+
+export interface HeroBannerData {
+  imageUrl?: string;
+  headline?: string;
+  subtitle?: string;
+  ctaText?: string;
+  ctaLink?: string;
+}
+
+export async function getHeroBanner(): Promise<HeroBannerData | null> {
+  try {
+    const data = await shopifyFetch<{
+      metaobjects: {
+        edges: Array<{
+          node: {
+            handle: string;
+            fields: Array<{
+              key: string;
+              value: string;
+              reference?: {
+                image?: {
+                  url: string;
+                };
+                url?: string;
+              } | null;
+            }>;
+          };
+        }>;
+      };
+    }>({
+      query: `
+        query GetHeroBanner {
+          metaobjects(type: "hero_banner", first: 1) {
+            edges {
+              node {
+                handle
+                fields {
+                  key
+                  value
+                  reference {
+                    ... on MediaImage {
+                      image {
+                        url
+                      }
+                    }
+                    ... on GenericFile {
+                      url
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      tags: ["metaobjects", "hero_banner"],
+    });
+
+    const node = data?.metaobjects?.edges?.[0]?.node;
+    if (!node) return null;
+
+    const fieldsMap: Record<string, { value: string; imageUrl?: string }> = {};
+    for (const f of node.fields) {
+      fieldsMap[f.key] = {
+        value: f.value,
+        imageUrl: f.reference?.image?.url || f.reference?.url,
+      };
+    }
+
+    return {
+      imageUrl: fieldsMap.image?.imageUrl || (fieldsMap.image?.value?.startsWith("http") ? fieldsMap.image.value : undefined),
+      headline: fieldsMap.headline?.value,
+      subtitle: fieldsMap.subtitle?.value,
+      ctaText: fieldsMap.cta_text?.value,
+      ctaLink: fieldsMap.cta_link?.value,
+    };
+  } catch (err) {
+    console.warn("Failed to fetch hero_banner metaobject:", err);
+    return null;
+  }
+}
