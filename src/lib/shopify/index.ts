@@ -288,30 +288,6 @@ export async function getProductByHandle(
   return data.productByHandle ? reshapeProduct(data.productByHandle) : null;
 }
 
-export async function getProductRecommendations(
-  productId: string,
-): Promise<Product[]> {
-  const data = await shopifyFetch<{
-    productRecommendations: ShopifyProduct[];
-  }>({
-    query: `
-      query GetProductRecommendations($productId: ID!) {
-        productRecommendations(productId: $productId) {
-          ...ProductFields
-        }
-      }
-      ${PRODUCT_FRAGMENT}
-    `,
-    variables: { productId },
-    tags: ["products"],
-  });
-
-  if (!data) return [];
-  return (data.productRecommendations || [])
-    .slice(0, 4)
-    .map(reshapeProduct);
-}
-
 export async function searchProducts(query: string): Promise<Product[]> {
   const trimmed = query?.trim();
   if (!trimmed) return [];
@@ -603,6 +579,81 @@ export async function createShopifyCheckout(
 
 // ─── Metaobjects (CMS) ───────────────────────────────────────────────────────
 
+// Generic metaobject field after parsing
+interface MetaobjectField {
+  value: string;
+  imageUrl?: string;
+}
+
+/**
+ * Generic helper to fetch a single metaobject entry by type(s).
+ * Tries each type in order and returns the first match.
+ * Returns a Record<key, MetaobjectField> or null.
+ */
+async function fetchMetaobject(
+  types: string[],
+  tagLabel: string,
+): Promise<Record<string, MetaobjectField> | null> {
+  try {
+    // Build aliased queries for each type
+    const aliases = types.map(
+      (type, i) => `
+        t${i}: metaobjects(type: "${type}", first: 1) {
+          edges {
+            node {
+              handle
+              fields {
+                key
+                value
+                reference {
+                  ... on MediaImage { image { url } }
+                  ... on GenericFile { url }
+                }
+              }
+            }
+          }
+        }
+      `,
+    );
+
+    const data = await shopifyFetch<
+      Record<string, { edges: Array<{ node: { handle: string; fields: Array<{ key: string; value: string; reference?: { image?: { url: string }; url?: string } | null }> } }> }>
+    >({
+      query: `query GetMetaobject { ${aliases.join("\n")} }`,
+      tags: ["metaobjects", tagLabel],
+    });
+
+    if (!data) return null;
+
+    // Find first type that returned a result
+    let node: { handle: string; fields: Array<{ key: string; value: string; reference?: { image?: { url: string }; url?: string } | null }> } | undefined;
+    for (let i = 0; i < types.length; i++) {
+      node = data[`t${i}`]?.edges?.[0]?.node;
+      if (node) break;
+    }
+    if (!node) return null;
+
+    const fields: Record<string, MetaobjectField> = {};
+    for (const f of node.fields) {
+      fields[f.key] = {
+        value: f.value,
+        imageUrl: f.reference?.image?.url || f.reference?.url,
+      };
+    }
+    return fields;
+  } catch (err) {
+    console.warn(`Failed to fetch ${tagLabel} metaobject:`, err);
+    return null;
+  }
+}
+
+/** Extract image URL from a field map entry */
+function fieldImage(f?: MetaobjectField): string | undefined {
+  return f?.imageUrl || (f?.value?.startsWith("http") ? f.value : undefined);
+}
+
+// ─── Typed CMS Interfaces & Exports ──────────────────────────────────────────
+
 export interface HeroBannerData {
   imageUrl?: string;
   headline?: string;
@@ -612,76 +663,15 @@ export interface HeroBannerData {
 }
 
 export async function getHeroBanner(): Promise<HeroBannerData | null> {
-  try {
-    const data = await shopifyFetch<{
-      metaobjects: {
-        edges: Array<{
-          node: {
-            handle: string;
-            fields: Array<{
-              key: string;
-              value: string;
-              reference?: {
-                image?: {
-                  url: string;
-                };
-                url?: string;
-              } | null;
-            }>;
-          };
-        }>;
-      };
-    }>({
-      query: `
-        query GetHeroBanner {
-          metaobjects(type: "hero_banner", first: 1) {
-            edges {
-              node {
-                handle
-                fields {
-                  key
-                  value
-                  reference {
-                    ... on MediaImage {
-                      image {
-                        url
-                      }
-                    }
-                    ... on GenericFile {
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-      tags: ["metaobjects", "hero_banner"],
-    });
-
-    const node = data?.metaobjects?.edges?.[0]?.node;
-    if (!node) return null;
-
-    const fieldsMap: Record<string, { value: string; imageUrl?: string }> = {};
-    for (const f of node.fields) {
-      fieldsMap[f.key] = {
-        value: f.value,
-        imageUrl: f.reference?.image?.url || f.reference?.url,
-      };
-    }
-
-    return {
-      imageUrl: fieldsMap.image?.imageUrl || (fieldsMap.image?.value?.startsWith("http") ? fieldsMap.image.value : undefined),
-      headline: fieldsMap.headline?.value,
-      subtitle: fieldsMap.subtitle?.value,
-      ctaText: fieldsMap.cta_text?.value,
-      ctaLink: fieldsMap.cta_link?.value,
-    };
-  } catch (err) {
-    console.warn("Failed to fetch hero_banner metaobject:", err);
-    return null;
-  }
+  const f = await fetchMetaobject(["hero_banner"], "hero_banner");
+  if (!f) return null;
+  return {
+    imageUrl: fieldImage(f.image),
+    headline: f.headline?.value,
+    subtitle: f.subtitle?.value,
+    ctaText: f.cta_text?.value,
+    ctaLink: f.cta_link?.value,
+  };
 }
 
 export interface FeaturedSectionData {
@@ -693,57 +683,15 @@ export interface FeaturedSectionData {
 }
 
 export async function getFeaturedSection(): Promise<FeaturedSectionData | null> {
-  try {
-    const data = await shopifyFetch<{
-      metaobjects: {
-        edges: Array<{
-          node: {
-            handle: string;
-            fields: Array<{
-              key: string;
-              value: string;
-            }>;
-          };
-        }>;
-      };
-    }>({
-      query: `
-        query GetFeaturedSection {
-          metaobjects(type: "featured_section", first: 1) {
-            edges {
-              node {
-                handle
-                fields {
-                  key
-                  value
-                }
-              }
-            }
-          }
-        }
-      `,
-      tags: ["metaobjects", "featured_section"],
-    });
-
-    const node = data?.metaobjects?.edges?.[0]?.node;
-    if (!node) return null;
-
-    const fieldsMap: Record<string, string> = {};
-    for (const f of node.fields) {
-      fieldsMap[f.key] = f.value;
-    }
-
-    return {
-      eyebrow: fieldsMap.eyebrow,
-      headline: fieldsMap.headline,
-      description: fieldsMap.description,
-      ctaText: fieldsMap.cta_text,
-      ctaLink: fieldsMap.cta_link,
-    };
-  } catch (err) {
-    console.warn("Failed to fetch featured_section metaobject:", err);
-    return null;
-  }
+  const f = await fetchMetaobject(["featured_section"], "featured_section");
+  if (!f) return null;
+  return {
+    eyebrow: f.eyebrow?.value,
+    headline: f.headline?.value,
+    description: f.description?.value,
+    ctaText: f.cta_text?.value,
+    ctaLink: f.cta_link?.value,
+  };
 }
 
 export interface EditorialBannerData {
@@ -753,74 +701,13 @@ export interface EditorialBannerData {
 }
 
 export async function getEditorialBanner(): Promise<EditorialBannerData | null> {
-  try {
-    const data = await shopifyFetch<{
-      metaobjects: {
-        edges: Array<{
-          node: {
-            handle: string;
-            fields: Array<{
-              key: string;
-              value: string;
-              reference?: {
-                image?: {
-                  url: string;
-                };
-                url?: string;
-              } | null;
-            }>;
-          };
-        }>;
-      };
-    }>({
-      query: `
-        query GetEditorialBanner {
-          metaobjects(type: "editorial_banner", first: 1) {
-            edges {
-              node {
-                handle
-                fields {
-                  key
-                  value
-                  reference {
-                    ... on MediaImage {
-                      image {
-                        url
-                      }
-                    }
-                    ... on GenericFile {
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-      tags: ["metaobjects", "editorial_banner"],
-    });
-
-    const node = data?.metaobjects?.edges?.[0]?.node;
-    if (!node) return null;
-
-    const fieldsMap: Record<string, { value: string; imageUrl?: string }> = {};
-    for (const f of node.fields) {
-      fieldsMap[f.key] = {
-        value: f.value,
-        imageUrl: f.reference?.image?.url || f.reference?.url,
-      };
-    }
-
-    return {
-      imageUrl: fieldsMap.image?.imageUrl || (fieldsMap.image?.value?.startsWith("http") ? fieldsMap.image.value : undefined),
-      headline: fieldsMap.headline?.value,
-      subtitle: fieldsMap.subtitle?.value,
-    };
-  } catch (err) {
-    console.warn("Failed to fetch editorial_banner metaobject:", err);
-    return null;
-  }
+  const f = await fetchMetaobject(["editorial_banner"], "editorial_banner");
+  if (!f) return null;
+  return {
+    imageUrl: fieldImage(f.image),
+    headline: f.headline?.value,
+    subtitle: f.subtitle?.value,
+  };
 }
 
 export interface StorySectionData {
@@ -834,230 +721,35 @@ export interface StorySectionData {
 }
 
 export async function getStorySection(): Promise<StorySectionData | null> {
-  try {
-    const data = await shopifyFetch<{
-      aboutStory: {
-        edges: Array<{
-          node: {
-            handle: string;
-            fields: Array<{
-              key: string;
-              value: string;
-              reference?: {
-                image?: {
-                  url: string;
-                };
-                url?: string;
-              } | null;
-            }>;
-          };
-        }>;
-      };
-      story: {
-        edges: Array<{
-          node: {
-            handle: string;
-            fields: Array<{
-              key: string;
-              value: string;
-              reference?: {
-                image?: {
-                  url: string;
-                };
-                url?: string;
-              } | null;
-            }>;
-          };
-        }>;
-      };
-    }>({
-      query: `
-        query GetStorySection {
-          aboutStory: metaobjects(type: "about_story_section", first: 1) {
-            edges {
-              node {
-                handle
-                fields {
-                  key
-                  value
-                  reference {
-                    ... on MediaImage {
-                      image {
-                        url
-                      }
-                    }
-                    ... on GenericFile {
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-          story: metaobjects(type: "story_section", first: 1) {
-            edges {
-              node {
-                handle
-                fields {
-                  key
-                  value
-                  reference {
-                    ... on MediaImage {
-                      image {
-                        url
-                      }
-                    }
-                    ... on GenericFile {
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-      tags: ["metaobjects", "story_section"],
-    });
-
-    const node =
-      data?.aboutStory?.edges?.[0]?.node ||
-      data?.story?.edges?.[0]?.node;
-    if (!node) return null;
-
-    const fieldsMap: Record<string, { value: string; imageUrl?: string }> = {};
-    for (const f of node.fields) {
-      fieldsMap[f.key] = {
-        value: f.value,
-        imageUrl: f.reference?.image?.url || f.reference?.url,
-      };
-    }
-
-    return {
-      imageUrl: fieldsMap.image?.imageUrl || (fieldsMap.image?.value?.startsWith("http") ? fieldsMap.image.value : undefined),
-      eyebrow: fieldsMap.eyebrow?.value,
-      headline: fieldsMap.headline?.value,
-      paragraph1: fieldsMap.paragraph_1?.value || fieldsMap.paragraph1?.value,
-      paragraph2: fieldsMap.paragraph_2?.value || fieldsMap.paragraph2?.value,
-      ctaText: fieldsMap.cta_text?.value,
-      ctaLink: fieldsMap.cta_link?.value,
-    };
-  } catch (err) {
-    console.warn("Failed to fetch story_section metaobject:", err);
-    return null;
-  }
+  const f = await fetchMetaobject(
+    ["about_story_section", "story_section"],
+    "story_section",
+  );
+  if (!f) return null;
+  return {
+    imageUrl: fieldImage(f.image),
+    eyebrow: f.eyebrow?.value,
+    headline: f.headline?.value,
+    paragraph1: f.paragraph_1?.value || f.paragraph1?.value,
+    paragraph2: f.paragraph_2?.value || f.paragraph2?.value,
+    ctaText: f.cta_text?.value,
+    ctaLink: f.cta_link?.value,
+  };
 }
 
 export async function getBottomBanner(): Promise<EditorialBannerData | null> {
-  try {
-    const data = await shopifyFetch<{
-      bottomEditorial: {
-        edges: Array<{
-          node: {
-            handle: string;
-            fields: Array<{
-              key: string;
-              value: string;
-              reference?: {
-                image?: {
-                  url: string;
-                };
-                url?: string;
-              } | null;
-            }>;
-          };
-        }>;
-      };
-      bottom: {
-        edges: Array<{
-          node: {
-            handle: string;
-            fields: Array<{
-              key: string;
-              value: string;
-              reference?: {
-                image?: {
-                  url: string;
-                };
-                url?: string;
-              } | null;
-            }>;
-          };
-        }>;
-      };
-    }>({
-      query: `
-        query GetBottomBanner {
-          bottomEditorial: metaobjects(type: "bottom_editorial_banner", first: 1) {
-            edges {
-              node {
-                handle
-                fields {
-                  key
-                  value
-                  reference {
-                    ... on MediaImage {
-                      image {
-                        url
-                      }
-                    }
-                    ... on GenericFile {
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-          bottom: metaobjects(type: "bottom_banner", first: 1) {
-            edges {
-              node {
-                handle
-                fields {
-                  key
-                  value
-                  reference {
-                    ... on MediaImage {
-                      image {
-                        url
-                      }
-                    }
-                    ... on GenericFile {
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-      tags: ["metaobjects", "bottom_banner"],
-    });
-
-    const node =
-      data?.bottomEditorial?.edges?.[0]?.node ||
-      data?.bottom?.edges?.[0]?.node;
-    if (!node) return null;
-
-    const fieldsMap: Record<string, { value: string; imageUrl?: string }> = {};
-    for (const f of node.fields) {
-      fieldsMap[f.key] = {
-        value: f.value,
-        imageUrl: f.reference?.image?.url || f.reference?.url,
-      };
-    }
-
-    return {
-      imageUrl: fieldsMap.image?.imageUrl || (fieldsMap.image?.value?.startsWith("http") ? fieldsMap.image.value : undefined),
-      headline: fieldsMap.headline?.value,
-      subtitle: fieldsMap.subtitle?.value,
-    };
-  } catch (err) {
-    console.warn("Failed to fetch bottom_banner metaobject:", err);
-    return null;
-  }
+  const f = await fetchMetaobject(
+    ["bottom_editorial_banner", "bottom_banner"],
+    "bottom_banner",
+  );
+  if (!f) return null;
+  return {
+    imageUrl: fieldImage(f.image),
+    headline: f.headline?.value,
+    subtitle: f.subtitle?.value,
+  };
 }
+
 
 
 
