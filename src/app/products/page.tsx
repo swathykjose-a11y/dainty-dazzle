@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 
 const PRODUCTS_PER_PAGE = 12;
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "All Products",

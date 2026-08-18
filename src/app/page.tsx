@@ -4,7 +4,8 @@ import { FeaturedCollectionsSection } from "@/components/sections/home/featured-
 import { EditorialBanner } from "@/components/sections/home/editorial-banner";
 import { StorySection } from "@/components/sections/home/story-section";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
   const [products, heroData] = await Promise.all([

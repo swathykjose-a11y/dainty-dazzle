@@ -7,6 +7,8 @@ import { AddToCartButton } from "./add-to-cart-button";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
+export const revalidate = 0;
+
 // ─── Static params (pre-render all products at build time) ──────────────────
 
 export async function generateStaticParams() {

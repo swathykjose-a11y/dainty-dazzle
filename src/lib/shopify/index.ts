@@ -19,10 +19,12 @@ async function shopifyFetch<T>({
   query,
   variables,
   tags,
+  revalidate = 0,
 }: {
   query: string;
   variables?: Record<string, unknown>;
   tags?: string[];
+  revalidate?: number;
 }): Promise<T | null> {
   if (!SHOPIFY_GRAPHQL_URL || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
     console.warn(
@@ -38,7 +40,7 @@ async function shopifyFetch<T>({
       "X-Shopify-Storefront-Access-Token": SHOPIFY_STOREFRONT_ACCESS_TOKEN,
     },
     body: JSON.stringify({ query, variables }),
-    next: { revalidate: 3600, tags },
+    next: { revalidate, tags },
   });
 
   const json = await res.json();
