@@ -35,15 +35,16 @@ export default function OgImage() {
         {/* Brand name */}
         <div
           style={{
-            fontSize: 96,
+            fontSize: 76,
             color: "#1A211D",
             fontWeight: 400,
-            letterSpacing: "-0.02em",
-            lineHeight: 1,
+            letterSpacing: "0.02em",
+            lineHeight: 1.1,
             display: "flex",
+            textAlign: "center",
           }}
         >
-          Lumiere
+          Dainty Dazzle
         </div>
 
         {/* Divider line */}
@@ -52,8 +53,8 @@ export default function OgImage() {
             width: 80,
             height: 1,
             backgroundColor: "#C4A265",
-            marginTop: 32,
-            marginBottom: 32,
+            marginTop: 28,
+            marginBottom: 28,
             display: "flex",
           }}
         />
@@ -61,9 +62,9 @@ export default function OgImage() {
         {/* Tagline */}
         <div
           style={{
-            fontSize: 20,
+            fontSize: 18,
             color: "#737F76",
-            letterSpacing: "0.15em",
+            letterSpacing: "0.22em",
             textTransform: "uppercase",
             display: "flex",
           }}
@@ -83,7 +84,7 @@ export default function OgImage() {
             display: "flex",
           }}
         >
-          daintydazzle.com
+          daintydazzle.store
         </div>
       </div>
     ),

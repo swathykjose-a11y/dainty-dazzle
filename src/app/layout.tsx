@@ -84,14 +84,6 @@ export const metadata: Metadata = {
     description:
       "True beauty shines from within. Shop handcrafted earrings and necklaces designed for everyday elegance.",
     url: siteUrl,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Dainty Dazzle - Handcrafted Jewelry",
-      },
-    ],
   },
 
   // ─── Twitter Card ──────────────────────────────────────────────────────────
@@ -100,7 +92,6 @@ export const metadata: Metadata = {
     title: "Dainty Dazzle Jewelry | Earrings & Necklaces",
     description:
       "True beauty shines from within. Shop handcrafted earrings and necklaces designed for everyday elegance.",
-    images: ["/og-image.png"],
   },
 
   // ─── Other ─────────────────────────────────────────────────────────────────
