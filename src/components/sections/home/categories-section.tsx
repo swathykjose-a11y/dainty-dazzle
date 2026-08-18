@@ -1,5 +1,5 @@
 /*
- * Categories Section — "Bestsellers" grid
+ * Categories Section - "Bestsellers" grid
  *
  * Displays category cards (Earrings, Necklaces) with representative
  * product images and starting prices, linking to collection pages.

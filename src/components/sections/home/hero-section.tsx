@@ -2,7 +2,7 @@
  * Dainty Dazzle Hero Section
  *
  * Full-viewport-height cinematic hero with brand name overlay,
- * subtitle, and "Shop Now" CTA — matching Simuero reference layout.
+ * subtitle, and "Shop Now" CTA - matching Simuero reference layout.
  */
 
 import Image from "next/image";

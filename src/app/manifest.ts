@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Dainty Dazzle — Fine Jewelry",
+    name: "Dainty Dazzle | Fine Jewelry",
     short_name: "Dainty Dazzle",
     description:
       "True beauty shines from within. Discover delicate, handcrafted jewelry designed to reflect it.",

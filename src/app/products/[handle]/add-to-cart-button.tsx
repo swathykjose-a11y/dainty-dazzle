@@ -85,7 +85,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
 
       {/* Add to Cart row: [Add to Cart button] [Quantity controls] */}
       <div className="flex items-stretch gap-3">
-        {/* Add to Cart CTA — dark filled, takes majority of width */}
+        {/* Add to Cart CTA - dark filled, takes majority of width */}
         <button
           type="button"
           onClick={handleAddToCart}
@@ -107,7 +107,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
           {isAvailable ? "Add to Cart" : "Sold Out"}
         </button>
 
-        {/* Quantity stepper — compact, bordered */}
+        {/* Quantity stepper - compact, bordered */}
         <div className="flex items-center border border-sage-border rounded-sm bg-card-white h-13 shrink-0">
           <button
             type="button"

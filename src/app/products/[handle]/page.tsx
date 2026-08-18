@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `/products/${product.handle}`,
     },
     openGraph: {
-      title: `${product.title} — Dainty Dazzle`,
+      title: `${product.title} | Dainty Dazzle`,
       description: plainDescription,
       url: `${siteUrl}/products/${product.handle}`,
       type: "website",
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.title} — Dainty Dazzle`,
+      title: `${product.title} | Dainty Dazzle`,
       description: plainDescription,
       images: product.images.map((img) => img.url),
     },

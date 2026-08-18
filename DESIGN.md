@@ -1,4 +1,4 @@
-# Dainty Dazzle — Design System (Lumiere Reference)
+# Dainty Dazzle - Design System (Lumiere Reference)
 
 ## §1. Brand & Reference Vision
 
@@ -14,9 +14,9 @@ Derived strictly from the reference interface ("Lumiere"):
 
 | Token          | Hex       | CSS Variable          | Role                                                |
 | -------------- | --------- | --------------------- | --------------------------------------------------- |
-| `sage-canvas`  | `#F2F5EF` | `--color-sage-canvas` | Primary page background — pale mint-foam cream       |
+| `sage-canvas`  | `#F2F5EF` | `--color-sage-canvas` | Primary page background - pale mint-foam cream       |
 | `card-white`   | `#FFFFFF` | `--color-card-white`  | Product card & elevated surface background           |
-| `charcoal`     | `#1A211D` | `--color-charcoal`    | Primary text & deep accents — forest charcoal black |
+| `charcoal`     | `#1A211D` | `--color-charcoal`    | Primary text & deep accents - forest charcoal black |
 | `sage-border`  | `#D5DDD6` | `--color-sage-border` | Subtle section dividers & pill button borders        |
 | `sage-muted`   | `#737F76` | `--color-sage-muted`  | Subtitles, index numbers `(01)`, caption copy       |
 | `gilt-accent`  | `#C4A265` | `--color-gilt-accent` | Secondary highlight / gold accent                   |

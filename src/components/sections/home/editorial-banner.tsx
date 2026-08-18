@@ -1,5 +1,5 @@
 /*
- * Editorial Banner — Full-bleed section
+ * Editorial Banner - Full-bleed section
  *
  * Full-width, full-viewport-height image with text overlay.
  * Reusable for multiple placements on the homepage.

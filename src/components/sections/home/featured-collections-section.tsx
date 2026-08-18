@@ -1,5 +1,5 @@
 /*
- * Featured Products Section — "Creating, Crafting & Wearing" layout
+ * Featured Products Section - "Creating, Crafting & Wearing" layout
  *
  * Matches Simuero reference: large serif headline on the left,
  * 2×2 product card grid on the right.
@@ -17,7 +17,7 @@ interface FeaturedProductsSectionProps {
 export function FeaturedCollectionsSection({
   products,
 }: FeaturedProductsSectionProps) {
-  // Pick 2 deterministic "random" products — same for all users.
+  // Pick 2 deterministic "random" products (same for all users).
   // Uses a simple hash on the product id to shuffle, then takes the first 2.
   const picked = [...products]
     .sort((a, b) => {

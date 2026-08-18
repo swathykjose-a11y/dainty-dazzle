@@ -1,5 +1,5 @@
 /*
- * Brand Story Section — "We believe in our process"
+ * Brand Story Section - "We believe in our process"
  *
  * Split layout matching Simuero reference:
  * Large image on the left, brand story text + CTA on the right.
@@ -18,7 +18,7 @@ export function StorySection() {
           <div className="relative aspect-4/5 sm:aspect-3/4 lg:aspect-4/5 w-full rounded-xs overflow-hidden bg-sage-border/30">
             <Image
               src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=1200&q=85&auto=format&fit=crop"
-              alt="Dainty Dazzle craftsmanship — handcrafted jewelry process"
+              alt="Dainty Dazzle craftsmanship - handcrafted jewelry process"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover object-center"
@@ -41,7 +41,7 @@ export function StorySection() {
               Every piece of Dainty Dazzle jewelry is crafted with intention.
               From selecting materials to the final polish, we pour care into every
               step. Our designs are rooted in simplicity and made to be worn
-              every day — because true elegance is effortless.
+              every day, because true elegance is effortless.
             </p>
 
             <p className="mt-4 text-sm font-primary text-sage-muted leading-relaxed max-w-md">

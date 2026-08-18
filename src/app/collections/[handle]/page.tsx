@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `/collections/${collection.handle}`,
     },
     openGraph: {
-      title: `${collection.title} — Dainty Dazzle`,
+      title: `${collection.title} | Dainty Dazzle`,
       description: collection.description,
       url: `${siteUrl}/collections/${collection.handle}`,
       type: "website",
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${collection.title} — Dainty Dazzle`,
+      title: `${collection.title} | Dainty Dazzle`,
       description: collection.description,
       ...(collection.image && { images: [collection.image.url] }),
     },

@@ -41,7 +41,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             All Products
           </h1>
           <p className="mt-4 text-sm font-primary text-sage-muted leading-relaxed max-w-lg">
-            Every piece in our collection — handcrafted with care, designed to
+            Every piece in our collection, handcrafted with care, designed to
             be worn every single day.
           </p>
         </div>

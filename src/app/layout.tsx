@@ -34,7 +34,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   title: {
-    default: "Dainty Dazzle Jewelry — Earrings & Necklaces",
+    default: "Dainty Dazzle Jewelry | Earrings & Necklaces",
     template: "%s | Dainty Dazzle",
   },
   description:
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Dainty Dazzle Jewelry",
     locale: "en_IN",
-    title: "Dainty Dazzle Jewelry — Earrings & Necklaces",
+    title: "Dainty Dazzle Jewelry | Earrings & Necklaces",
     description:
       "True beauty shines from within. Shop handcrafted earrings and necklaces designed for everyday elegance.",
     url: siteUrl,
@@ -89,7 +89,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Dainty Dazzle — Handcrafted Jewelry",
+        alt: "Dainty Dazzle - Handcrafted Jewelry",
       },
     ],
   },
@@ -97,7 +97,7 @@ export const metadata: Metadata = {
   // ─── Twitter Card ──────────────────────────────────────────────────────────
   twitter: {
     card: "summary_large_image",
-    title: "Dainty Dazzle Jewelry — Earrings & Necklaces",
+    title: "Dainty Dazzle Jewelry | Earrings & Necklaces",
     description:
       "True beauty shines from within. Shop handcrafted earrings and necklaces designed for everyday elegance.",
     images: ["/og-image.png"],
