@@ -16,11 +16,27 @@
   --font-secondary: var(--font-overused-grotesk), "Helvetica Neue", sans-serif;
 }
 
-/* Base resets */
+/* Base resets & Hide scrollbars across all browsers */
+html,
 body {
   background-color: var(--color-sage-canvas);
   color: var(--color-charcoal);
   font-family: var(--font-primary);
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari, Opera, Edge */
+::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  height: 0px;
+}
+
+/* Ensure no scrollbar on scrollable children */
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 ::selection {
@@ -45,4 +61,5 @@ html {
 .animate-fade-in-up {
   animation: fadeInUp 0.8s ease-out forwards;
 }
+
 
