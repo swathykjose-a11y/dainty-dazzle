@@ -7,16 +7,27 @@
 
 import Link from "next/link";
 import type { Product } from "@/types/product";
+import type { FeaturedSectionData } from "@/lib/shopify";
 import { ProductCard } from "@/components/shared/product-card";
 import { Button } from "@/components/ui/button";
 
 interface FeaturedProductsSectionProps {
   products: Product[];
+  featuredData?: FeaturedSectionData | null;
 }
 
 export function FeaturedCollectionsSection({
   products,
+  featuredData,
 }: FeaturedProductsSectionProps) {
+  const eyebrow = featuredData?.eyebrow || "Our Collection";
+  const headline = featuredData?.headline || "Creating,\nCrafting\n& Wearing.";
+  const description =
+    featuredData?.description ||
+    "Each piece is designed with care and crafted to celebrate everyday elegance. Discover jewelry that feels like it was made just for you.";
+  const ctaText = featuredData?.ctaText || "EXPLORE ALL ↗";
+  const ctaLink = featuredData?.ctaLink || "/products";
+
   // Pick 2 deterministic "random" products (same for all users).
   // Uses a simple hash on the product id to shuffle, then takes the first 2.
   const picked = [...products]
@@ -27,6 +38,8 @@ export function FeaturedCollectionsSection({
     })
     .slice(0, 2);
 
+  const headlineLines = headline.split("\n");
+
   return (
     <section className="py-16 md:py-24 lg:py-32 bg-sage-canvas">
       <div className="w-full px-4 sm:px-8 lg:px-12">
@@ -35,25 +48,25 @@ export function FeaturedCollectionsSection({
           <div className="lg:col-span-4 flex flex-col justify-between animate-fade-in-up">
             <div>
               <span className="text-[10px] font-primary font-medium uppercase tracking-[0.2em] text-sage-muted mb-4 block">
-                Our Collection
+                {eyebrow}
               </span>
               <h2 className="font-secondary text-4xl md:text-5xl lg:text-6xl text-charcoal tracking-tight font-normal leading-[1.1]">
-                Creating,
-                <br />
-                Crafting
-                <br />
-                &amp; Wearing.
+                {headlineLines.map((line, i) => (
+                  <span key={i}>
+                    {line}
+                    {i < headlineLines.length - 1 && <br />}
+                  </span>
+                ))}
               </h2>
-              <p className="mt-6 text-sm font-primary text-sage-muted leading-relaxed max-w-sm">
-                Each piece is designed with care and crafted to celebrate
-                everyday elegance. Discover jewelry that feels like it was made just for you.
+              <p className="mt-6 text-sm font-primary text-sage-muted leading-relaxed max-w-sm whitespace-pre-line">
+                {description}
               </p>
             </div>
 
             <div className="mt-8">
-              <Link href="/products">
+              <Link href={ctaLink}>
                 <Button variant="outline" size="md">
-                  EXPLORE ALL ↗
+                  {ctaText}
                 </Button>
               </Link>
             </div>
