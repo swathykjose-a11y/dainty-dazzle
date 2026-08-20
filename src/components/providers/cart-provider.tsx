@@ -101,7 +101,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
           },
         ];
       });
-      showToast(`Added ${product.title} to cart`);
+      showToast("Added to cart", {
+        variant: "success",
+        productImage: product.images?.[0]?.url,
+        productTitle: product.title,
+        action: { label: "View Cart", href: "/cart" },
+      });
     },
     [],
   );

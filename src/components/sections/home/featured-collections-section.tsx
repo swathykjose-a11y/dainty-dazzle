@@ -28,15 +28,7 @@ export function FeaturedCollectionsSection({
   const ctaText = featuredData?.ctaText || "EXPLORE ALL ↗";
   const ctaLink = featuredData?.ctaLink || "/products";
 
-  // Pick 2 deterministic "random" products (same for all users).
-  // Uses a simple hash on the product id to shuffle, then takes the first 2.
-  const picked = [...products]
-    .sort((a, b) => {
-      const hashA = a.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-      const hashB = b.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-      return hashA - hashB;
-    })
-    .slice(0, 2);
+  const picked = products.slice(0, 2);
 
   const headlineLines = headline.split("\n");
 

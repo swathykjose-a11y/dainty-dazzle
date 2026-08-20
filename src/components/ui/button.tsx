@@ -1,7 +1,7 @@
 import { type ButtonHTMLAttributes } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonVariant = "primary" | "outline";
+type ButtonSize = "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -11,16 +11,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
     "bg-charcoal text-sage-canvas hover:bg-charcoal/90 border border-charcoal",
-  secondary:
-    "bg-card-white text-charcoal border border-sage-border hover:border-charcoal",
   outline:
     "bg-transparent text-charcoal border border-charcoal/30 hover:border-charcoal hover:bg-charcoal/5",
-  ghost:
-    "bg-transparent text-charcoal hover:bg-charcoal/5 border-transparent",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "h-8 px-4 text-[10px]",
   md: "h-9 px-5 text-[11px]",
   lg: "h-11 px-7 text-[12px]",
 };
