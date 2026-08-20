@@ -1,14 +1,26 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPolicyBySlug, getPolicies } from "@/lib/shopify";
+import { getLocalPolicies, getLocalPolicyBySlug } from "@/lib/policies";
+import { getPolicyBySlug as getShopifyPolicyBySlug } from "@/lib/shopify";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
+// ─── Resolve policy: local first, Shopify fallback ──────────────────────────
+
+async function resolvePolicy(slug: string) {
+  const local = getLocalPolicyBySlug(slug);
+  if (local) return local;
+
+  // Fallback to Shopify if local content is not available for this slug
+  const shopify = await getShopifyPolicyBySlug(slug);
+  return shopify;
+}
+
 // ─── Static params ──────────────────────────────────────────────────────────
 
-export async function generateStaticParams() {
-  const policies = await getPolicies();
+export function generateStaticParams() {
+  const policies = getLocalPolicies();
   return policies.map((p) => ({ slug: p.slug }));
 }
 
@@ -20,7 +32,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const policy = await getPolicyBySlug(slug);
+  const policy = await resolvePolicy(slug);
 
   if (!policy) {
     return { title: "Policy Not Found" };
@@ -43,7 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PolicyPage({ params }: Props) {
   const { slug } = await params;
-  const policy = await getPolicyBySlug(slug);
+  const policy = await resolvePolicy(slug);
 
   if (!policy) notFound();
 
