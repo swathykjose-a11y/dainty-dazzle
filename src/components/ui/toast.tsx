@@ -194,7 +194,7 @@ function ToastItem({
         bg-card-white backdrop-blur-sm
         border border-sage-border/80
         rounded-lg shadow-lg shadow-charcoal/8
-        w-[340px] max-w-[calc(100vw-2rem)]
+        w-85 max-w-[calc(100vw-2rem)]
         transition-all duration-300 ease-out
         ${isExiting ? "toast-exit" : "toast-enter"}
       `}
@@ -281,7 +281,7 @@ function ToastItem({
       </div>
 
       {/* Progress bar */}
-      <div className="h-[2px] w-full bg-sage-border/30">
+      <div className="h-0.5 w-full bg-sage-border/30">
         <div
           className={`h-full ${progressColor[toast.variant ?? "success"]} transition-none`}
           style={{ width: `${progress}%` }}
@@ -320,7 +320,7 @@ export function ToastContainer() {
   return (
     <div
       aria-live="polite"
-      className="fixed bottom-5 right-5 z-[100] flex flex-col-reverse gap-2.5 sm:bottom-6 sm:right-6"
+      className="fixed bottom-5 right-5 z-100 flex flex-col-reverse gap-2.5 sm:bottom-6 sm:right-6"
     >
       {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} onDismiss={removeToast} />
